@@ -1,0 +1,130 @@
+---
+import { getCollection, render } from 'astro:content';
+import { ArrowLeft } from '@lucide/astro';
+import Layout from '../../layouts/Layout.astro';
+import { formatDate, slugifyTag, sortPosts } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = sortPosts(await getCollection('blog'));
+
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Layout title={post.data.title} description={post.data.description}>
+  <article class="page-shell article-shell">
+    <div class="container article-container">
+      <a class="back-link" href="/blog">
+        <ArrowLeft size={17} stroke-width={2.2} /> Back to blog
+      </a>
+      <header class="article-header">
+        <div class="tag-row">
+          {post.data.tags.map((tag) => <a class="tag" href={`/tags#${slugifyTag(tag)}`}>{tag}</a>)}
+        </div>
+        <h1>{post.data.title}</h1>
+        <p>{post.data.description}</p>
+        <div class="article-meta">
+          <span>{formatDate(post.data.pubDate)}</span>
+          <span>{post.data.readTime}</span>
+        </div>
+      </header>
+      <div class="content">
+        <Content />
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .article-shell {
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .article-container {
+    width: min(100% - 40px, 820px);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
+    color: #4c5362;
+    font-weight: 750;
+  }
+
+  .article-header {
+    padding-bottom: 34px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    margin: 0 0 18px;
+    font-size: clamp(2.3rem, 1.6rem + 2.6vw, 4.4rem);
+    line-height: 1.03;
+    letter-spacing: 0;
+  }
+
+  .article-header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.15rem;
+    line-height: 1.75;
+  }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin-top: 24px;
+    color: #5d6575;
+    font-weight: 650;
+  }
+
+  .article-meta span + span::before {
+    margin-right: 14px;
+    color: #9ca4b4;
+    content: "•";
+  }
+
+  .content {
+    padding-top: 34px;
+    color: #273040;
+    font-size: 1.08rem;
+    line-height: 1.85;
+  }
+
+  .content :global(p) {
+    margin: 0 0 1.35em;
+  }
+
+  .content :global(a) {
+    color: var(--accent-strong);
+    font-weight: 700;
+  }
+
+  .content :global(h2) {
+    margin: 2em 0 0.6em;
+    font-size: 1.7rem;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 760px) {
+    .article-container {
+      width: min(100% - 28px, 820px);
+    }
+  }
+</style>

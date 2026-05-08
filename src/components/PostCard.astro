@@ -1,0 +1,277 @@
+---
+import { ArrowRight } from '@lucide/astro';
+import type { BlogPost } from '../lib/posts';
+import { formatDate } from '../lib/posts';
+
+interface Props {
+  post: BlogPost;
+  compact?: boolean;
+}
+
+const { post, compact = false } = Astro.props;
+const { title, description, pubDate, readTime, tags, cover } = post.data;
+const primaryTag = tags[0] ?? 'Notes';
+---
+
+<article class:list={['post-card', { compact }]}>
+  <a class={`cover ${cover}`} href={`/blog/${post.id}`} aria-label={title}>
+    {
+      cover === 'typescript' && (
+        <span class="ts-mark" aria-hidden="true">
+          TS
+        </span>
+      )
+    }
+    {
+      cover === 'architecture' && (
+        <span class="wave-lines" aria-hidden="true">
+          <i></i>
+          <i></i>
+          <i></i>
+        </span>
+      )
+    }
+    {
+      cover === 'growth' && (
+        <span class="seedling" aria-hidden="true">
+          <i></i>
+          <i></i>
+          <b></b>
+        </span>
+      )
+    }
+    {
+      cover === 'astro' && (
+        <span class="astro-mark" aria-hidden="true">
+          A
+        </span>
+      )
+    }
+  </a>
+
+  <div class="post-body">
+    <h3><a href={`/blog/${post.id}`}>{title}</a></h3>
+    <p>{description}</p>
+    <div class="post-meta">
+      <span>{formatDate(pubDate)}</span>
+      <span>{primaryTag}</span>
+      <span>{readTime}</span>
+    </div>
+    {
+      compact && (
+        <a class="read-link" href={`/blog/${post.id}`}>
+          Read post <ArrowRight size={16} stroke-width={2.2} />
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .post-card {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 10px 30px rgba(25, 31, 48, 0.04);
+  }
+
+  .cover {
+    position: relative;
+    display: grid;
+    min-height: 168px;
+    place-items: center;
+    overflow: hidden;
+    border-bottom: 1px solid #edf0f5;
+  }
+
+  .cover.typescript {
+    background:
+      radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.9), transparent 180px),
+      linear-gradient(135deg, #d5c9ff, #dcefff 70%);
+  }
+
+  .cover.architecture {
+    background: linear-gradient(135deg, #ecf4ff, #f8fbff);
+  }
+
+  .cover.growth {
+    background:
+      radial-gradient(circle at 55% 55%, rgba(72, 146, 77, 0.14), transparent 110px),
+      linear-gradient(135deg, #f7fbef, #deede0);
+  }
+
+  .cover.astro {
+    background:
+      radial-gradient(circle at 28% 24%, rgba(194, 86, 111, 0.16), transparent 170px),
+      linear-gradient(135deg, #eef0ff, #fff7f3);
+  }
+
+  .ts-mark,
+  .astro-mark {
+    display: grid;
+    width: 76px;
+    height: 76px;
+    place-items: center;
+    border-radius: 8px;
+    color: white;
+    font-size: 2.3rem;
+    font-weight: 900;
+    box-shadow: 0 20px 42px rgba(64, 91, 211, 0.24);
+  }
+
+  .ts-mark {
+    background: #5275df;
+  }
+
+  .astro-mark {
+    background: linear-gradient(135deg, #2b2f7f, #c2566f);
+  }
+
+  .wave-lines {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .wave-lines i {
+    position: absolute;
+    left: -18%;
+    width: 140%;
+    height: 120px;
+    border: 2px solid rgba(142, 165, 198, 0.34);
+    border-radius: 50%;
+    transform: rotate(-21deg);
+  }
+
+  .wave-lines i:nth-child(1) {
+    top: 8px;
+  }
+
+  .wave-lines i:nth-child(2) {
+    top: 42px;
+  }
+
+  .wave-lines i:nth-child(3) {
+    top: 76px;
+  }
+
+  .seedling {
+    position: relative;
+    width: 86px;
+    height: 94px;
+  }
+
+  .seedling b {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    width: 78px;
+    height: 16px;
+    border-radius: 50%;
+    background: #51442f;
+    transform: translateX(-50%);
+  }
+
+  .seedling i {
+    position: absolute;
+    bottom: 18px;
+    left: 42px;
+    width: 5px;
+    height: 58px;
+    border-radius: 999px;
+    background: #4d7d42;
+  }
+
+  .seedling i:nth-child(1)::before,
+  .seedling i:nth-child(2)::before {
+    position: absolute;
+    top: 0;
+    width: 48px;
+    height: 24px;
+    border-radius: 100% 0 100% 0;
+    background: linear-gradient(135deg, #7bb45d, #2f7d4c);
+    content: "";
+  }
+
+  .seedling i:nth-child(1)::before {
+    right: 2px;
+    transform: rotate(18deg);
+    transform-origin: right bottom;
+  }
+
+  .seedling i:nth-child(2)::before {
+    left: 2px;
+    transform: scaleX(-1) rotate(18deg);
+    transform-origin: left bottom;
+  }
+
+  .post-body {
+    padding: 21px 22px 24px;
+  }
+
+  .post-body h3 {
+    margin: 0 0 10px;
+    font-size: 1.06rem;
+    line-height: 1.35;
+  }
+
+  .post-body p {
+    min-height: 55px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin-top: 23px;
+    color: #596071;
+    font-size: 0.88rem;
+  }
+
+  .post-meta span + span::before {
+    margin-right: 12px;
+    color: #9ca4b4;
+    content: "•";
+  }
+
+  .read-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 20px;
+    color: var(--accent-strong);
+    font-weight: 750;
+  }
+
+  .post-card.compact {
+    display: grid;
+    grid-template-columns: minmax(190px, 32%) 1fr;
+  }
+
+  .post-card.compact .cover {
+    min-height: 100%;
+    border-right: 1px solid #edf0f5;
+    border-bottom: 0;
+  }
+
+  .post-card.compact .post-body p {
+    min-height: auto;
+  }
+
+  @media (max-width: 700px) {
+    .post-card.compact {
+      grid-template-columns: 1fr;
+    }
+
+    .post-card.compact .cover {
+      min-height: 160px;
+      border-right: 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+  }
+</style>

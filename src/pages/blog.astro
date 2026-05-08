@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import PostCard from '../components/PostCard.astro';
+import Layout from '../layouts/Layout.astro';
+import { sortPosts } from '../lib/posts';
+
+const posts = sortPosts(await getCollection('blog'));
+---
+
+<Layout
+  title="Blog"
+  description="Articles about software engineering, product building, and learning in public."
+>
+  <section class="page-shell">
+    <div class="container">
+      <div class="page-header">
+        <p class="eyebrow"><strong>Blog</strong></p>
+        <h1>Thoughts from the workbench.</h1>
+        <p>
+          Notes on code, tools, product thinking, and the habits that make
+          creative technical work a little more durable.
+        </p>
+      </div>
+
+      <div class="post-list">
+        {posts.map((post) => <PostCard post={post} compact />)}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .post-list {
+    display: grid;
+    gap: 22px;
+  }
+</style>

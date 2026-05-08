@@ -1,0 +1,211 @@
+<div class="hero-visual" aria-hidden="true">
+  <div class="desk"></div>
+  <div class="plant">
+    <span class="leaf leaf-one"></span>
+    <span class="leaf leaf-two"></span>
+    <span class="leaf leaf-three"></span>
+    <span class="stem"></span>
+    <span class="pot"></span>
+  </div>
+  <div class="laptop">
+    <div class="screen">
+      <div class="code-line muted">1&nbsp;&nbsp;// code</div>
+      <div class="code-line">2&nbsp;&nbsp;<span class="violet">const</span> developer = {'{'}</div>
+      <div class="code-line">3&nbsp;&nbsp;&nbsp;&nbsp;name: <span class="green">'Kirin'</span>,</div>
+      <div class="code-line">4&nbsp;&nbsp;&nbsp;&nbsp;skills: [<span class="green">'Astro'</span>, <span class="green">'TypeScript'</span>],</div>
+      <div class="code-line">5&nbsp;&nbsp;&nbsp;&nbsp;passion: <span class="green">'Building things'</span>,</div>
+      <div class="code-line">6&nbsp;&nbsp;{'}'};</div>
+      <div class="code-space"></div>
+      <div class="code-line">8&nbsp;&nbsp;<span class="blue">function</span> write() {'{'}</div>
+      <div class="code-line">9&nbsp;&nbsp;&nbsp;&nbsp;<span class="violet">return</span> <span class="green">'Clarity'</span>;</div>
+      <div class="code-line">10 {'}'}</div>
+    </div>
+    <div class="base"></div>
+  </div>
+</div>
+
+<style>
+  .hero-visual {
+    position: relative;
+    overflow: hidden;
+    min-height: 360px;
+  }
+
+  .desk {
+    position: absolute;
+    right: -60px;
+    bottom: 0;
+    width: min(760px, 100%);
+    height: 92px;
+    border: 1px solid #e4e9f0;
+    border-right: 0;
+    background: linear-gradient(180deg, #f3f5f9, #e8edf4);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .laptop {
+    position: absolute;
+    right: 36px;
+    bottom: 50px;
+    width: min(560px, 82%);
+  }
+
+  .screen {
+    min-height: 285px;
+    border: 9px solid #11141c;
+    border-radius: 11px 11px 5px 5px;
+    padding: 28px 30px;
+    background: #fbfcfe;
+    box-shadow: 0 24px 42px rgba(25, 31, 48, 0.13);
+    color: #2f3543;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: clamp(0.72rem, 0.52rem + 0.38vw, 0.96rem);
+    line-height: 1.85;
+    white-space: nowrap;
+  }
+
+  .code-line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .code-space {
+    height: 10px;
+  }
+
+  .muted {
+    color: #8991a2;
+  }
+
+  .violet {
+    color: #8352c5;
+  }
+
+  .green {
+    color: #25844d;
+  }
+
+  .blue {
+    color: #4b65d9;
+  }
+
+  .base {
+    height: 34px;
+    border-radius: 0 0 18px 18px;
+    background:
+      linear-gradient(90deg, transparent 39%, rgba(255, 255, 255, 0.6) 39% 61%, transparent 61%),
+      linear-gradient(180deg, #aeb5c2, #7f8795);
+    box-shadow: 0 14px 28px rgba(25, 31, 48, 0.16);
+  }
+
+  .plant {
+    position: absolute;
+    right: min(640px, 71%);
+    bottom: 95px;
+    width: 115px;
+    height: 185px;
+  }
+
+  .stem {
+    position: absolute;
+    bottom: 44px;
+    left: 54px;
+    width: 4px;
+    height: 110px;
+    border-radius: 999px;
+    background: #4d7d42;
+    transform: rotate(-3deg);
+  }
+
+  .leaf {
+    position: absolute;
+    width: 54px;
+    height: 24px;
+    border-radius: 100% 0 100% 0;
+    background: linear-gradient(135deg, #5d9b56, #2f6f42);
+    transform-origin: right bottom;
+  }
+
+  .leaf-one {
+    top: 44px;
+    left: 12px;
+    transform: rotate(18deg);
+  }
+
+  .leaf-two {
+    top: 66px;
+    right: 3px;
+    transform: scaleX(-1) rotate(16deg);
+  }
+
+  .leaf-three {
+    top: 18px;
+    left: 45px;
+    transform: rotate(-28deg);
+  }
+
+  .pot {
+    position: absolute;
+    right: 26px;
+    bottom: 0;
+    width: 64px;
+    height: 54px;
+    border-radius: 12px 12px 22px 22px;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.9), transparent 28px),
+      linear-gradient(135deg, #ffffff, #e7ebf1);
+    box-shadow: 0 16px 24px rgba(25, 31, 48, 0.12);
+  }
+
+  @media (max-width: 1120px) {
+    .hero-visual {
+      min-height: 330px;
+    }
+
+    .plant {
+      right: auto;
+      left: 10px;
+      transform: scale(0.85);
+      transform-origin: bottom left;
+    }
+
+    .laptop {
+      right: 0;
+      width: min(540px, 88%);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .hero-visual {
+      width: 100%;
+      max-width: calc(100vw - 28px);
+      min-height: 250px;
+    }
+
+    .desk {
+      right: 0;
+      width: 100%;
+      height: 72px;
+    }
+
+    .screen {
+      overflow: hidden;
+      min-height: 210px;
+      border-width: 7px;
+      padding: 18px;
+      font-size: 0.68rem;
+      line-height: 1.75;
+    }
+
+    .plant {
+      display: none;
+    }
+
+    .laptop {
+      right: 0;
+      left: 0;
+      width: 100%;
+      bottom: 34px;
+    }
+  }
+</style>

@@ -1,0 +1,151 @@
+---
+import { ArrowRight } from '@lucide/astro';
+import { getCollection } from 'astro:content';
+import HeroVisual from '../components/HeroVisual.astro';
+import PostCard from '../components/PostCard.astro';
+import ProfileCard from '../components/ProfileCard.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import Layout from '../layouts/Layout.astro';
+import { sortPosts } from '../lib/posts';
+
+const posts = sortPosts(await getCollection('blog'));
+const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 3);
+---
+
+<Layout>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Hi, I'm <strong>Kirin</strong></p>
+        <h1>A Developer who writes and builds.</h1>
+        <p class="intro">
+          I share thoughts on coding, productivity, and building products.
+          Welcome to my digital garden.
+        </p>
+        <div class="button-row">
+          <a class="button primary" href="/blog">Read Blog</a>
+          <a class="button" href="/about">About Me</a>
+        </div>
+        <SocialLinks />
+      </div>
+      <HeroVisual />
+    </div>
+  </section>
+
+  <section class="home-content">
+    <div class="container content-grid">
+      <div class="featured">
+        <div class="section-heading">
+          <h2>Featured Posts</h2>
+          <a class="section-link" href="/blog">
+            View all posts <ArrowRight size={17} stroke-width={2.2} />
+          </a>
+        </div>
+        <div class="posts-grid">
+          {featuredPosts.map((post) => <PostCard post={post} />)}
+        </div>
+      </div>
+      <ProfileCard />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.64);
+  }
+
+  .hero-grid {
+    display: grid;
+    min-height: 535px;
+    align-items: center;
+    grid-template-columns: minmax(320px, 0.9fr) minmax(480px, 1.25fr);
+    gap: 42px;
+    padding: 42px 0 0;
+  }
+
+  .hero-copy {
+    min-width: 0;
+    max-width: 560px;
+    padding: 34px 0 54px;
+  }
+
+  h1 {
+    margin: 0;
+    max-width: 620px;
+    font-size: clamp(3rem, 1.7rem + 4vw, 5.25rem);
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+
+  .intro {
+    max-width: 520px;
+    margin: 26px 0 0;
+    color: var(--muted);
+    font-size: 1.12rem;
+    line-height: 1.7;
+  }
+
+  .home-content {
+    padding: 28px 0 44px;
+    background: rgba(255, 255, 255, 0.76);
+  }
+
+  .content-grid {
+    display: grid;
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr) 350px;
+    gap: 44px;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  @media (max-width: 1180px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding-top: 28px;
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      padding-bottom: 18px;
+    }
+
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-grid {
+      min-height: auto;
+    }
+
+    h1 {
+      max-width: calc(100vw - 28px);
+      font-size: 2.34rem;
+      overflow-wrap: break-word;
+    }
+
+    .intro {
+      max-width: calc(100vw - 28px);
+      font-size: 1rem;
+    }
+
+    .button-row {
+      max-width: calc(100vw - 28px);
+    }
+  }
+</style>

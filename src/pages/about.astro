@@ -1,0 +1,225 @@
+---
+import { BriefcaseBusiness, CodeXml, Compass, Heart } from '@lucide/astro';
+import Layout from '../layouts/Layout.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+
+const values = [
+  {
+    title: 'Build with clarity',
+    body: 'I like systems that are easy to explain, easy to change, and honest about their tradeoffs.',
+    Icon: CodeXml,
+  },
+  {
+    title: 'Write to learn',
+    body: 'Writing is how I turn scattered notes into something useful for future me and other builders.',
+    Icon: Compass,
+  },
+  {
+    title: 'Share the craft',
+    body: 'Good engineering culture grows through examples, reviews, small tools, and patient documentation.',
+    Icon: Heart,
+  },
+];
+---
+
+<Layout title="About" description="About Kirin, the person behind Kirin Blog.">
+  <section class="page-shell">
+    <div class="container about-grid">
+      <div class="page-header">
+        <p class="eyebrow">About <strong>Kirin</strong></p>
+        <h1>Software engineer, product-minded builder, careful writer.</h1>
+        <p>
+          I build web products, write about the practice of software, and keep
+          notes on the decisions that make small teams move with confidence.
+        </p>
+        <SocialLinks />
+      </div>
+
+      <aside class="about-card">
+        <div class="portrait" aria-hidden="true"><span></span></div>
+        <h2>Kirin</h2>
+        <p>Hangzhou, China</p>
+        <div class="role"><BriefcaseBusiness size={18} /> Software Engineer</div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="about-section">
+    <div class="container values-grid">
+      {
+        values.map(({ title, body, Icon }) => (
+          <article class="value-card">
+            <Icon size={24} stroke-width={2.2} />
+            <h2>{title}</h2>
+            <p>{body}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="page-shell timeline-shell">
+    <div class="container timeline">
+      <div class="section-heading">
+        <h2>Now</h2>
+      </div>
+      <div class="timeline-list">
+        <article>
+          <span>2026</span>
+          <h3>Building a more useful personal knowledge base</h3>
+          <p>Collecting notes, essays, project logs, and repeatable patterns in one quiet place.</p>
+        </article>
+        <article>
+          <span>Focus</span>
+          <h3>Astro, TypeScript, product engineering</h3>
+          <p>Exploring fast content sites, better frontend systems, and thoughtful developer tooling.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .about-grid {
+    display: grid;
+    align-items: center;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 52px;
+  }
+
+  .about-card,
+  .value-card,
+  .timeline-list article {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 14px 36px rgba(25, 31, 48, 0.05);
+  }
+
+  .about-card {
+    padding: 28px;
+  }
+
+  .portrait {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 1.05;
+    border-radius: var(--radius);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0 50%, transparent 50%),
+      linear-gradient(135deg, #dfe8f5, #f3d6ca);
+  }
+
+  .portrait::before,
+  .portrait::after,
+  .portrait span {
+    position: absolute;
+    content: "";
+  }
+
+  .portrait::before {
+    right: 36%;
+    bottom: 38%;
+    width: 70px;
+    height: 76px;
+    border-radius: 50%;
+    background: #202633;
+  }
+
+  .portrait::after {
+    right: 25%;
+    bottom: 6%;
+    width: 170px;
+    height: 122px;
+    border-radius: 80px 80px 20px 20px;
+    background: #1b2230;
+    transform: rotate(10deg);
+  }
+
+  .portrait span {
+    right: 28%;
+    bottom: 34%;
+    z-index: 1;
+    width: 48px;
+    height: 36px;
+    border-radius: 50%;
+    background: #d3a58f;
+  }
+
+  .about-card h2 {
+    margin: 22px 0 4px;
+    font-size: 1.45rem;
+  }
+
+  .about-card p {
+    margin: 0 0 16px;
+    color: var(--muted);
+  }
+
+  .role {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #414858;
+    font-weight: 750;
+  }
+
+  .about-section {
+    padding: 18px 0 34px;
+  }
+
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .value-card {
+    padding: 26px;
+  }
+
+  .value-card svg {
+    color: var(--accent-strong);
+  }
+
+  .value-card h2,
+  .timeline h2,
+  .timeline-list h3 {
+    margin: 16px 0 10px;
+    font-size: 1.2rem;
+  }
+
+  .value-card p,
+  .timeline-list p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .timeline-shell {
+    padding-top: 22px;
+  }
+
+  .timeline-list {
+    display: grid;
+    gap: 18px;
+  }
+
+  .timeline-list article {
+    padding: 24px;
+  }
+
+  .timeline-list span {
+    color: var(--accent-strong);
+    font-size: 0.9rem;
+    font-weight: 850;
+  }
+
+  @media (max-width: 960px) {
+    .about-grid,
+    .values-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,140 @@
+---
+import { ArrowRight, BriefcaseBusiness, Heart, MapPin } from '@lucide/astro';
+---
+
+<aside class="profile-card" aria-label="About Kirin">
+  <h2>About Me</h2>
+  <div class="profile-row">
+    <div class="avatar" aria-hidden="true">
+      <span></span>
+    </div>
+    <p>
+      I'm Kirin, a software engineer passionate about building products and
+      sharing knowledge. I enjoy turning ideas into reality with code.
+    </p>
+  </div>
+  <ul class="facts">
+    <li><MapPin size={18} /> Hangzhou, China</li>
+    <li><BriefcaseBusiness size={18} /> Software Engineer</li>
+    <li><Heart size={18} /> Open Source</li>
+  </ul>
+  <a class="profile-link" href="/about">
+    View full profile <ArrowRight size={17} stroke-width={2.2} />
+  </a>
+</aside>
+
+<style>
+  .profile-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    background: var(--surface);
+    box-shadow: 0 18px 42px rgba(25, 31, 48, 0.06);
+  }
+
+  h2 {
+    margin: 0 0 20px;
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .profile-row {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 96px 1fr;
+    gap: 20px;
+  }
+
+  .avatar {
+    position: relative;
+    overflow: hidden;
+    width: 92px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0 48%, transparent 48%),
+      linear-gradient(135deg, #ced8e7, #f2d8cf);
+  }
+
+  .avatar span,
+  .avatar::before,
+  .avatar::after {
+    position: absolute;
+    display: block;
+    content: "";
+  }
+
+  .avatar::before {
+    top: 25px;
+    left: 33px;
+    width: 28px;
+    height: 31px;
+    border-radius: 50%;
+    background: #202633;
+  }
+
+  .avatar::after {
+    right: 18px;
+    bottom: 11px;
+    width: 58px;
+    height: 45px;
+    border-radius: 35px 35px 14px 14px;
+    background: #1b2230;
+    transform: rotate(12deg);
+  }
+
+  .avatar span {
+    right: 19px;
+    bottom: 36px;
+    z-index: 1;
+    width: 22px;
+    height: 18px;
+    border-radius: 50%;
+    background: #d3a58f;
+  }
+
+  p {
+    margin: 0;
+    color: #4d5565;
+    font-size: 0.97rem;
+    line-height: 1.55;
+  }
+
+  .facts {
+    display: grid;
+    gap: 14px;
+    margin: 24px 0;
+    padding: 0;
+    color: #50586a;
+    font-size: 0.93rem;
+    list-style: none;
+  }
+
+  .facts li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .facts svg {
+    color: #303747;
+  }
+
+  .profile-link {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: #424857;
+    font-weight: 700;
+  }
+
+  @media (max-width: 560px) {
+    .profile-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,127 @@
+---
+import { getCollection } from 'astro:content';
+import { ArrowRight } from '@lucide/astro';
+import Layout from '../layouts/Layout.astro';
+import { formatDate, slugifyTag, sortPosts } from '../lib/posts';
+
+const posts = sortPosts(await getCollection('blog'));
+const tags = posts.reduce<Record<string, typeof posts>>((acc, post) => {
+  for (const tag of post.data.tags) {
+    acc[tag] = acc[tag] ?? [];
+    acc[tag].push(post);
+  }
+  return acc;
+}, {});
+
+const tagEntries = Object.entries(tags).sort(([a], [b]) => a.localeCompare(b));
+---
+
+<Layout title="Tags" description="Browse Kirin Blog articles by tag.">
+  <section class="page-shell">
+    <div class="container">
+      <div class="page-header">
+        <p class="eyebrow"><strong>Tags</strong></p>
+        <h1>Browse by topic.</h1>
+        <p>
+          A simple index for finding posts by language, tool, practice, and
+          theme.
+        </p>
+      </div>
+
+      <div class="tag-cloud">
+        {
+          tagEntries.map(([tag, tagPosts]) => (
+            <a class="tag" href={`#${slugifyTag(tag)}`}>
+              {tag} <span>{tagPosts.length}</span>
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="tag-sections">
+        {
+          tagEntries.map(([tag, tagPosts]) => (
+            <section id={slugifyTag(tag)} class="tag-section">
+              <div class="section-heading">
+                <h2>{tag}</h2>
+                <span>{tagPosts.length} posts</span>
+              </div>
+              <div class="tag-posts">
+                {tagPosts.map((post) => (
+                  <a class="tag-post" href={`/blog/${post.id}`}>
+                    <div>
+                      <h3>{post.data.title}</h3>
+                      <p>{formatDate(post.data.pubDate)} · {post.data.readTime}</p>
+                    </div>
+                    <ArrowRight size={18} stroke-width={2.2} />
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 34px;
+  }
+
+  .tag-cloud span {
+    margin-left: 7px;
+    color: var(--accent-strong);
+  }
+
+  .tag-sections {
+    display: grid;
+    gap: 22px;
+  }
+
+  .tag-section {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    background: var(--surface);
+    box-shadow: 0 14px 36px rgba(25, 31, 48, 0.05);
+    scroll-margin-top: 120px;
+  }
+
+  .tag-section .section-heading {
+    margin-bottom: 12px;
+  }
+
+  .section-heading span {
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .tag-posts {
+    display: grid;
+  }
+
+  .tag-post {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  h3 {
+    margin: 0 0 5px;
+    font-size: 1.08rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+</style>
