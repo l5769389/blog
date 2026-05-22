@@ -1,62 +1,72 @@
 ---
-import { ArrowUpRight, BookOpenText, Layers, Sparkles } from '@lucide/astro';
+import { Activity, ArrowRight, ArrowUpRight, Layers } from '@lucide/astro';
 import Layout from '../layouts/Layout.astro';
 
 const projects = [
   {
-    name: 'Kirin Blog',
-    description: 'A fast personal blog built with Astro, Markdown content collections, and a calm visual system.',
-    tech: ['Astro', 'TypeScript', 'CSS'],
-    status: 'Active',
-    Icon: BookOpenText,
+    name: 'RespiraScope',
+    description:
+      '呼吸信号采集、实时滤波、峰谷识别、BPM 计算、记录复盘和 Web Console 展示工具。',
+    tech: ['FastAPI', 'Socket.IO', 'Signal Processing', 'PyInstaller'],
+    status: 'Featured',
+    noteHref: '/blog/respira-scope-realtime-breath-workbench',
+    githubHref: 'https://github.com/l5769389/RespiraScope',
+    image: '/images/respira-scope/breath-monitor.png',
+    Icon: Activity,
   },
   {
-    name: 'Component Notes',
-    description: 'A living notebook for small UI patterns, accessibility decisions, and reusable frontend recipes.',
-    tech: ['Design Systems', 'Docs'],
-    status: 'Drafting',
+    name: 'DicomVision',
+    description:
+      '面向 DICOM 阅片、MPR 重建、测量分析、DICOM 标签检查和 QA 流程的医学影像工作台。',
+    tech: ['Vue 3', 'FastAPI', 'Electron', 'DICOM'],
+    status: 'Featured',
+    noteHref: '/blog/dicom-vision-imaging-workbench',
+    githubHref: 'https://github.com/l5769389/DicomVisionClient',
+    image: '/images/dicom-vision/theme-dark.png',
     Icon: Layers,
-  },
-  {
-    name: 'Idea Forge',
-    description: 'A lightweight project log for shaping rough ideas into buildable product experiments.',
-    tech: ['Product', 'Writing'],
-    status: 'Exploring',
-    Icon: Sparkles,
   },
 ];
 ---
 
-<Layout title="Projects" description="Selected projects and experiments from Kirin.">
+<Layout title="Projects" description="Selected portfolio projects from Kirin.">
   <section class="page-shell">
     <div class="container">
       <div class="page-header">
         <p class="eyebrow"><strong>Projects</strong></p>
-        <h1>Small bets, useful tools, and written experiments.</h1>
+        <h1>两个重点作品集项目。</h1>
         <p>
-          A concise index of things I am building, improving, or using as a
-          place to think through product and engineering ideas.
+          这里不再把 GitHub 主页当成一个项目，而是直接展示 RespiraScope 和 DicomVision。每个项目都提供源码入口和对应的项目复盘，方便快速判断项目形态与实现深度。
         </p>
       </div>
 
       <div class="projects-grid">
         {
-          projects.map(({ name, description, tech, status, Icon }) => (
+          projects.map(({ name, description, tech, status, noteHref, githubHref, image, Icon }) => (
             <article class="project-card">
-              <div class="project-top">
-                <Icon size={28} stroke-width={2.1} />
-                <span>{status}</span>
-              </div>
-              <h2>{name}</h2>
-              <p>{description}</p>
-              <div class="tech-list">
-                {tech.map((item) => (
-                  <span class="tag">{item}</span>
-                ))}
-              </div>
-              <a href="#" aria-label={`Open ${name}`}>
-                Open project <ArrowUpRight size={17} stroke-width={2.2} />
+              <a class="project-image" href={noteHref} aria-label={`Open ${name} case note`}>
+                <img src={image} alt={`${name} project screenshot`} />
               </a>
+              <div class="project-body">
+                <div class="project-top">
+                  <Icon size={28} stroke-width={2.1} />
+                  <span>{status}</span>
+                </div>
+                <h2>{name}</h2>
+                <p>{description}</p>
+                <div class="tech-list">
+                  {tech.map((item) => (
+                    <span class="tag">{item}</span>
+                  ))}
+                </div>
+                <div class="project-links">
+                  <a href={noteHref} aria-label={`Read ${name} case note`}>
+                    项目复盘 <ArrowRight size={17} stroke-width={2.2} />
+                  </a>
+                  <a href={githubHref} aria-label={`Open ${name} on GitHub`}>
+                    GitHub 源码 <ArrowUpRight size={17} stroke-width={2.2} />
+                  </a>
+                </div>
+              </div>
             </article>
           ))
         }
@@ -68,19 +78,34 @@ const projects = [
 <style>
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 22px;
   }
 
   .project-card {
-    display: flex;
-    min-height: 360px;
-    flex-direction: column;
+    overflow: hidden;
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 26px;
     background: var(--surface);
-    box-shadow: 0 14px 36px rgba(25, 31, 48, 0.05);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .project-image {
+    display: block;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+    background: #080d13;
+  }
+
+  .project-image img {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+
+  .project-body {
+    padding: 26px;
   }
 
   .project-top {
@@ -88,7 +113,7 @@ const projects = [
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    margin-bottom: 34px;
+    margin-bottom: 28px;
   }
 
   .project-top svg {
@@ -99,14 +124,14 @@ const projects = [
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 6px 10px;
-    color: #4f5767;
+    color: var(--tag-text);
     font-size: 0.82rem;
     font-weight: 750;
   }
 
   h2 {
     margin: 0 0 12px;
-    font-size: 1.35rem;
+    font-size: 1.55rem;
   }
 
   p {
@@ -122,12 +147,17 @@ const projects = [
     margin-top: 24px;
   }
 
-  .project-card a {
+  .project-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 28px;
+  }
+
+  .project-links a {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    margin-top: auto;
-    padding-top: 28px;
     color: var(--accent-strong);
     font-weight: 800;
   }
@@ -136,9 +166,11 @@ const projects = [
     .projects-grid {
       grid-template-columns: 1fr;
     }
+  }
 
-    .project-card {
-      min-height: auto;
+  @media (max-width: 560px) {
+    .project-body {
+      padding: 22px;
     }
   }
 </style>

@@ -47,6 +47,24 @@ const primaryTag = tags[0] ?? 'Notes';
         </span>
       )
     }
+    {
+      cover === 'dicom' && (
+        <span class="dicom-mark" aria-hidden="true">
+          <i></i>
+          <b>DV</b>
+        </span>
+      )
+    }
+    {
+      cover === 'respira' && (
+        <span class="respira-mark" aria-hidden="true">
+          <i></i>
+          <i></i>
+          <i></i>
+          <b>RS</b>
+        </span>
+      )
+    }
   </a>
 
   <div class="post-body">
@@ -73,7 +91,7 @@ const primaryTag = tags[0] ?? 'Notes';
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--surface);
-    box-shadow: 0 10px 30px rgba(25, 31, 48, 0.04);
+    box-shadow: var(--card-shadow);
   }
 
   .cover {
@@ -82,33 +100,37 @@ const primaryTag = tags[0] ?? 'Notes';
     min-height: 168px;
     place-items: center;
     overflow: hidden;
-    border-bottom: 1px solid #edf0f5;
+    border-bottom: 1px solid var(--cover-border);
   }
 
   .cover.typescript {
-    background:
-      radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.9), transparent 180px),
-      linear-gradient(135deg, #d5c9ff, #dcefff 70%);
+    background: var(--cover-typescript-bg);
   }
 
   .cover.architecture {
-    background: linear-gradient(135deg, #ecf4ff, #f8fbff);
+    background: var(--cover-architecture-bg);
   }
 
   .cover.growth {
-    background:
-      radial-gradient(circle at 55% 55%, rgba(72, 146, 77, 0.14), transparent 110px),
-      linear-gradient(135deg, #f7fbef, #deede0);
+    background: var(--cover-growth-bg);
   }
 
   .cover.astro {
-    background:
-      radial-gradient(circle at 28% 24%, rgba(194, 86, 111, 0.16), transparent 170px),
-      linear-gradient(135deg, #eef0ff, #fff7f3);
+    background: var(--cover-astro-bg);
+  }
+
+  .cover.dicom {
+    background: var(--cover-dicom-bg);
+  }
+
+  .cover.respira {
+    background: var(--cover-respira-bg);
   }
 
   .ts-mark,
-  .astro-mark {
+  .astro-mark,
+  .dicom-mark,
+  .respira-mark {
     display: grid;
     width: 76px;
     height: 76px;
@@ -126,6 +148,70 @@ const primaryTag = tags[0] ?? 'Notes';
 
   .astro-mark {
     background: linear-gradient(135deg, #2b2f7f, #c2566f);
+  }
+
+  .dicom-mark {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(180, 187, 255, 0.36);
+    background:
+      linear-gradient(90deg, transparent 48%, rgba(118, 211, 156, 0.34) 49% 51%, transparent 52%),
+      linear-gradient(0deg, transparent 48%, rgba(240, 144, 170, 0.34) 49% 51%, transparent 52%),
+      #101722;
+    color: #eef3fb;
+  }
+
+  .dicom-mark i {
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(137, 146, 255, 0.5);
+    border-radius: 50%;
+  }
+
+  .dicom-mark b {
+    position: relative;
+    font-size: 1.5rem;
+    letter-spacing: 0;
+  }
+
+  .respira-mark {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(118, 211, 156, 0.36);
+    background: #0d1b17;
+    color: #eefbf4;
+  }
+
+  .respira-mark i {
+    position: absolute;
+    left: -14px;
+    width: 104px;
+    height: 36px;
+    border: 2px solid rgba(118, 211, 156, 0.48);
+    border-right: 0;
+    border-left: 0;
+    border-radius: 50%;
+  }
+
+  .respira-mark i:nth-child(1) {
+    top: 13px;
+    transform: rotate(-13deg);
+  }
+
+  .respira-mark i:nth-child(2) {
+    top: 25px;
+    transform: rotate(9deg);
+  }
+
+  .respira-mark i:nth-child(3) {
+    top: 38px;
+    transform: rotate(-9deg);
+  }
+
+  .respira-mark b {
+    position: relative;
+    font-size: 1.5rem;
+    letter-spacing: 0;
   }
 
   .wave-lines {
@@ -229,13 +315,13 @@ const primaryTag = tags[0] ?? 'Notes';
     flex-wrap: wrap;
     gap: 8px 12px;
     margin-top: 23px;
-    color: #596071;
+    color: var(--meta-text);
     font-size: 0.88rem;
   }
 
   .post-meta span + span::before {
     margin-right: 12px;
-    color: #9ca4b4;
+    color: var(--meta-divider);
     content: "•";
   }
 
@@ -255,7 +341,7 @@ const primaryTag = tags[0] ?? 'Notes';
 
   .post-card.compact .cover {
     min-height: 100%;
-    border-right: 1px solid #edf0f5;
+    border-right: 1px solid var(--cover-border);
     border-bottom: 0;
   }
 
@@ -271,7 +357,7 @@ const primaryTag = tags[0] ?? 'Notes';
     .post-card.compact .cover {
       min-height: 160px;
       border-right: 0;
-      border-bottom: 1px solid #edf0f5;
+      border-bottom: 1px solid var(--cover-border);
     }
   }
 </style>

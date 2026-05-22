@@ -1,34 +1,131 @@
 ---
-import { ArrowRight } from '@lucide/astro';
+import { ArrowRight, ArrowUpRight, CodeXml, Mail } from '@lucide/astro';
 import { getCollection } from 'astro:content';
-import HeroVisual from '../components/HeroVisual.astro';
 import PostCard from '../components/PostCard.astro';
 import ProfileCard from '../components/ProfileCard.astro';
-import SocialLinks from '../components/SocialLinks.astro';
 import Layout from '../layouts/Layout.astro';
 import { sortPosts } from '../lib/posts';
 
 const posts = sortPosts(await getCollection('blog'));
 const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 3);
+
+const portfolioProjects = [
+  {
+    name: 'RespiraScope',
+    area: 'Respiration / Signal Processing',
+    description:
+      '呼吸信号采集、实时滤波、峰谷识别、BPM 计算和 Web Console 监测工具。',
+    noteHref: '/blog/respira-scope-realtime-breath-workbench',
+    githubHref: 'https://github.com/l5769389/RespiraScope',
+    image: '/images/respira-scope/breath-monitor.png',
+    tags: ['FastAPI', 'Socket.IO', 'Signal Processing', 'Web Console'],
+  },
+  {
+    name: 'DicomVision',
+    area: 'DICOM / Medical Imaging',
+    description:
+      'DICOM 阅片、MPR 重建、测量分析、标签检查和 QA 流程的影像工作台。',
+    noteHref: '/blog/dicom-vision-imaging-workbench',
+    githubHref: 'https://github.com/l5769389/DicomVisionClient',
+    image: '/images/dicom-vision/theme-dark.png',
+    tags: ['Vue 3', 'FastAPI', 'Electron', 'Socket.IO'],
+  },
+];
 ---
 
-<Layout>
+<Layout
+  title="Kirin Works"
+  description="Kirin's portfolio, GitHub projects, and project notes."
+>
   <section class="hero">
     <div class="container hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">Hi, I'm <strong>Kirin</strong></p>
-        <h1>A Developer who writes and builds.</h1>
+        <p class="eyebrow"><strong>Portfolio</strong> / Kirin</p>
+        <h1>作品集和工程复盘。</h1>
         <p class="intro">
-          I share thoughts on coding, productivity, and building products.
-          Welcome to my digital garden.
+          这里优先展示我现在最想呈现的两个 GitHub 项目：RespiraScope 和 DicomVision。Blog 会作为补充，记录项目复盘、技术取舍和后续开发笔记。
         </p>
         <div class="button-row">
-          <a class="button primary" href="/blog">Read Blog</a>
-          <a class="button" href="/about">About Me</a>
+          <a class="button primary" href="/projects">
+            View Projects <ArrowRight size={18} stroke-width={2.2} />
+          </a>
+          <a class="button" href="https://github.com/l5769389">
+            <CodeXml size={18} stroke-width={2.2} /> GitHub 主页
+          </a>
+          <a class="button quiet" href="mailto:5769389@qq.com">
+            <Mail size={18} stroke-width={2.2} /> Contact
+          </a>
         </div>
-        <SocialLinks />
       </div>
-      <HeroVisual />
+
+      <aside class="showcase-panel" aria-label="Portfolio project preview">
+        <div class="panel-heading">
+          <p>Featured Projects</p>
+          <span>2 works</span>
+        </div>
+        <div class="showcase-list">
+          {
+            portfolioProjects.map((project) => (
+              <article class="showcase-item">
+                <a class="showcase-image" href={project.noteHref} aria-label={`Open ${project.name}`}>
+                  <img src={project.image} alt={`${project.name} project screenshot`} />
+                </a>
+                <div>
+                  <span>{project.area}</span>
+                  <h2>{project.name}</h2>
+                  <p>{project.description}</p>
+                  <div class="panel-links">
+                    <a href={project.noteHref}>
+                      复盘 <ArrowRight size={16} stroke-width={2.2} />
+                    </a>
+                    <a href={project.githubHref}>
+                      GitHub <ArrowUpRight size={16} stroke-width={2.2} />
+                    </a>
+                  </div>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="work-section">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Portfolio Projects</h2>
+        <a class="section-link" href="/projects">
+          View all projects <ArrowRight size={17} stroke-width={2.2} />
+        </a>
+      </div>
+      <div class="work-grid">
+        {
+          portfolioProjects.map((project) => (
+            <article class="work-card">
+              <a class="work-image" href={project.noteHref} aria-label={`Open ${project.name}`}>
+                <img src={project.image} alt={`${project.name} project screenshot`} />
+              </a>
+              <div class="work-body">
+                <span>{project.area}</span>
+                <h3>{project.name}</h3>
+                <p>{project.description}</p>
+                <div class="tech-list">
+                  {project.tags.map((item) => <span class="tag">{item}</span>)}
+                </div>
+                <div class="card-links">
+                  <a href={project.noteHref}>
+                    Read case note <ArrowRight size={17} stroke-width={2.2} />
+                  </a>
+                  <a href={project.githubHref}>
+                    Source <ArrowUpRight size={17} stroke-width={2.2} />
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
     </div>
   </section>
 
@@ -36,7 +133,7 @@ const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 3);
     <div class="container content-grid">
       <div class="featured">
         <div class="section-heading">
-          <h2>Featured Posts</h2>
+          <h2>Project Notes & Blog</h2>
           <a class="section-link" href="/blog">
             View all posts <ArrowRight size={17} stroke-width={2.2} />
           </a>
@@ -53,43 +150,183 @@ const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 3);
 <style>
   .hero {
     border-bottom: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.64);
+    background: var(--hero-bg);
   }
 
   .hero-grid {
     display: grid;
-    min-height: 535px;
+    min-height: 610px;
     align-items: center;
-    grid-template-columns: minmax(320px, 0.9fr) minmax(480px, 1.25fr);
-    gap: 42px;
-    padding: 42px 0 0;
+    grid-template-columns: minmax(320px, 0.9fr) minmax(520px, 1.1fr);
+    gap: 54px;
+    padding: 58px 0;
   }
 
   .hero-copy {
     min-width: 0;
-    max-width: 560px;
-    padding: 34px 0 54px;
+    max-width: 680px;
   }
 
   h1 {
     margin: 0;
-    max-width: 620px;
-    font-size: clamp(3rem, 1.7rem + 4vw, 5.25rem);
+    max-width: 720px;
+    font-size: clamp(2.8rem, 1.7rem + 3.7vw, 5.2rem);
     line-height: 1.08;
     letter-spacing: 0;
   }
 
   .intro {
-    max-width: 520px;
+    max-width: 640px;
     margin: 26px 0 0;
     color: var(--muted);
     font-size: 1.12rem;
-    line-height: 1.7;
+    line-height: 1.8;
+  }
+
+  .button.quiet {
+    color: var(--link-muted);
+  }
+
+  .showcase-panel,
+  .work-card {
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .showcase-panel {
+    padding: 20px;
+  }
+
+  .panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .panel-heading p {
+    margin: 0;
+    color: var(--accent-strong);
+    font-size: 0.86rem;
+    font-weight: 850;
+  }
+
+  .panel-heading span {
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+
+  .showcase-list {
+    display: grid;
+    gap: 16px;
+  }
+
+  .showcase-item {
+    display: grid;
+    align-items: center;
+    grid-template-columns: minmax(210px, 42%) 1fr;
+    gap: 20px;
+    min-width: 0;
+  }
+
+  .showcase-image,
+  .work-image {
+    display: block;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #080d13;
+  }
+
+  .showcase-image img,
+  .work-image img {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+
+  .showcase-item span,
+  .work-card span {
+    display: inline-flex;
+    margin: 0 0 8px;
+    color: var(--accent-strong);
+    font-size: 0.84rem;
+    font-weight: 850;
+  }
+
+  .showcase-item h2,
+  .work-card h3 {
+    margin: 0 0 8px;
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .showcase-item p,
+  .work-card p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.72;
+  }
+
+  .panel-links,
+  .card-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .panel-links a,
+  .card-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--accent-strong);
+    font-weight: 800;
+  }
+
+  .work-section {
+    padding: 36px 0;
+    border-bottom: 1px solid var(--line);
+    background: var(--home-bg);
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .work-card {
+    overflow: hidden;
+  }
+
+  .work-image {
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+  }
+
+  .work-body {
+    padding: 24px;
+  }
+
+  .tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
   }
 
   .home-content {
-    padding: 28px 0 44px;
-    background: rgba(255, 255, 255, 0.76);
+    padding: 36px 0 52px;
+    background: var(--home-bg);
   }
 
   .content-grid {
@@ -99,30 +336,35 @@ const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 3);
     gap: 44px;
   }
 
+  .featured {
+    min-width: 0;
+  }
+
   .posts-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 22px;
   }
 
   @media (max-width: 1180px) {
-    .hero-grid {
+    .hero-grid,
+    .content-grid {
       grid-template-columns: 1fr;
-      gap: 0;
-      padding-top: 28px;
+    }
+
+    .hero-grid {
+      gap: 28px;
+      padding-top: 42px;
     }
 
     .hero-copy {
       max-width: 760px;
-      padding-bottom: 18px;
-    }
-
-    .content-grid {
-      grid-template-columns: 1fr;
     }
   }
 
   @media (max-width: 900px) {
+    .showcase-item,
+    .work-grid,
     .posts-grid {
       grid-template-columns: 1fr;
     }
@@ -134,18 +376,27 @@ const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 3);
     }
 
     h1 {
-      max-width: calc(100vw - 28px);
-      font-size: 2.34rem;
-      overflow-wrap: break-word;
+      width: 100%;
+      max-width: 100%;
+      font-size: 1.82rem;
+      overflow-wrap: anywhere;
+      word-break: break-all;
     }
 
     .intro {
-      max-width: calc(100vw - 28px);
+      width: 100%;
+      max-width: 100%;
       font-size: 1rem;
+      overflow-wrap: anywhere;
     }
 
     .button-row {
       max-width: calc(100vw - 28px);
+    }
+
+    .showcase-panel,
+    .work-body {
+      padding: 22px;
     }
   }
 </style>

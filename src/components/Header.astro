@@ -1,5 +1,5 @@
 ---
-import { CodeXml, Search, Sun } from '@lucide/astro';
+import { CodeXml, Moon, Sun } from '@lucide/astro';
 
 const navItems = [
   { href: '/', label: 'Home' },
@@ -16,9 +16,9 @@ const isActive = (href: string) =>
 
 <header class="site-header">
   <div class="container nav-shell">
-    <a class="brand" href="/" aria-label="Kirin Blog home">
+    <a class="brand" href="/" aria-label="Kirin Works home">
       <span class="brand-mark">K</span>
-      <span>Kirin Blog</span>
+      <span>Kirin Works</span>
     </a>
 
     <nav class="nav-links" aria-label="Main navigation">
@@ -32,18 +32,66 @@ const isActive = (href: string) =>
     </nav>
 
     <div class="nav-actions" aria-label="Header actions">
-      <button type="button" aria-label="Search" title="Search">
-        <Search size={23} stroke-width={2.25} />
+      <button type="button" data-theme-toggle aria-label="Switch to dark theme" title="Switch to dark theme">
+        <span data-theme-icon-light aria-hidden="true">
+          <Sun size={22} stroke-width={2.2} />
+        </span>
+        <span data-theme-icon-dark aria-hidden="true" hidden>
+          <Moon size={22} stroke-width={2.2} />
+        </span>
       </button>
-      <button type="button" aria-label="Toggle color theme" title="Theme">
-        <Sun size={22} stroke-width={2.2} />
-      </button>
-      <a href="https://github.com/" aria-label="Code profile" title="Code">
+      <a href="https://github.com/l5769389" aria-label="GitHub home" title="GitHub home">
         <CodeXml size={22} stroke-width={2.3} />
       </a>
     </div>
   </div>
 </header>
+
+<script is:inline>
+  (() => {
+    const button = document.querySelector('[data-theme-toggle]');
+
+    if (!(button instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    const getTheme = () =>
+      document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+    const lightIcon = button.querySelector('[data-theme-icon-light]');
+    const darkIcon = button.querySelector('[data-theme-icon-dark]');
+
+    const updateButton = () => {
+      const isDark = getTheme() === 'dark';
+      const label = isDark ? 'Switch to light theme' : 'Switch to dark theme';
+
+      button.setAttribute('aria-label', label);
+      button.setAttribute('title', label);
+
+      if (lightIcon instanceof HTMLElement) {
+        lightIcon.hidden = isDark;
+      }
+
+      if (darkIcon instanceof HTMLElement) {
+        darkIcon.hidden = !isDark;
+      }
+    };
+
+    button.addEventListener('click', () => {
+      const nextTheme = getTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = nextTheme;
+
+      try {
+        localStorage.setItem('theme', nextTheme);
+      } catch {
+        // Theme still changes for the current page even when storage is unavailable.
+      }
+
+      updateButton();
+    });
+
+    updateButton();
+  })();
+</script>
 
 <style>
   .site-header {
@@ -51,7 +99,7 @@ const isActive = (href: string) =>
     z-index: 10;
     top: 0;
     border-bottom: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--header-bg);
     backdrop-filter: blur(18px);
   }
 
@@ -79,8 +127,8 @@ const isActive = (href: string) =>
     place-items: center;
     border: 1px solid var(--line-strong);
     border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 10px 24px rgba(25, 31, 48, 0.06);
+    background: var(--brand-bg);
+    box-shadow: var(--button-shadow);
   }
 
   .nav-links {
@@ -93,7 +141,7 @@ const isActive = (href: string) =>
   .nav-link {
     position: relative;
     padding: 28px 0 24px;
-    color: #202635;
+    color: var(--nav-text);
     font-size: 0.96rem;
     font-weight: 700;
   }
@@ -135,8 +183,18 @@ const isActive = (href: string) =>
     place-items: center;
     border: 0;
     background: transparent;
-    color: #080b12;
+    color: var(--icon-color);
     cursor: pointer;
+  }
+
+  [data-theme-icon-light],
+  [data-theme-icon-dark] {
+    display: grid;
+    place-items: center;
+  }
+
+  [hidden] {
+    display: none !important;
   }
 
   @media (max-width: 900px) {
@@ -188,7 +246,6 @@ const isActive = (href: string) =>
       gap: 2px;
     }
 
-    .nav-actions button:nth-of-type(2),
     .nav-actions a {
       display: none;
     }

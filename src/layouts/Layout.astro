@@ -7,11 +7,11 @@ interface Props {
 }
 
 const {
-  title = 'Kirin Blog',
-  description = 'A personal blog about code, products, and learning in public.',
+  title = 'Kirin Works',
+  description = 'A portfolio and project journal for Kirin.',
 } = Astro.props;
 
-const pageTitle = title === 'Kirin Blog' ? title : `${title} | Kirin Blog`;
+const pageTitle = title === 'Kirin Works' ? title : `${title} | Kirin Works`;
 ---
 
 <!doctype html>
@@ -24,6 +24,24 @@ const pageTitle = title === 'Kirin Blog' ? title : `${title} | Kirin Blog`;
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
+    <script is:inline>
+      (() => {
+        const fallbackTheme = 'light';
+
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light';
+          const theme =
+            savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : systemTheme;
+
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          document.documentElement.dataset.theme = fallbackTheme;
+        }
+      })();
+    </script>
   </head>
   <body>
     <Header />
@@ -32,8 +50,8 @@ const pageTitle = title === 'Kirin Blog' ? title : `${title} | Kirin Blog`;
     </main>
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>© 2026 Kirin Blog</p>
-        <a href="/blog">All posts</a>
+        <p>© 2026 Kirin Works</p>
+        <a href="mailto:5769389@qq.com">5769389@qq.com</a>
       </div>
     </footer>
   </body>
@@ -53,8 +71,99 @@ const pageTitle = title === 'Kirin Blog' ? title : `${title} | Kirin Blog`;
     --green: #2f7d4c;
     --rose: #c2566f;
     --shadow: 0 18px 45px rgba(32, 38, 58, 0.08);
+    --shadow-soft: 0 14px 36px rgba(25, 31, 48, 0.05);
+    --card-shadow: 0 10px 30px rgba(25, 31, 48, 0.04);
+    --button-shadow: 0 10px 22px rgba(25, 31, 48, 0.04);
+    --primary-shadow: 0 14px 28px rgba(91, 99, 241, 0.22);
+    --body-bg:
+      radial-gradient(circle at top left, rgba(91, 99, 241, 0.06), transparent 34rem),
+      linear-gradient(180deg, #ffffff 0, #f7f8fb 34rem);
+    --header-bg: rgba(255, 255, 255, 0.92);
+    --footer-bg: rgba(255, 255, 255, 0.8);
+    --hero-bg: rgba(255, 255, 255, 0.64);
+    --home-bg: rgba(255, 255, 255, 0.76);
+    --article-bg: rgba(255, 255, 255, 0.72);
+    --brand-bg: #ffffff;
+    --tag-bg: #ffffff;
+    --tag-text: #4c5362;
+    --link-muted: #424857;
+    --nav-text: #202635;
+    --icon-color: #080b12;
+    --content-text: #273040;
+    --meta-text: #5d6575;
+    --meta-divider: #9ca4b4;
+    --cover-border: #edf0f5;
+    --cover-typescript-bg:
+      radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.9), transparent 180px),
+      linear-gradient(135deg, #d5c9ff, #dcefff 70%);
+    --cover-architecture-bg: linear-gradient(135deg, #ecf4ff, #f8fbff);
+    --cover-growth-bg:
+      radial-gradient(circle at 55% 55%, rgba(72, 146, 77, 0.14), transparent 110px),
+      linear-gradient(135deg, #f7fbef, #deede0);
+    --cover-astro-bg:
+      radial-gradient(circle at 28% 24%, rgba(194, 86, 111, 0.16), transparent 170px),
+      linear-gradient(135deg, #eef0ff, #fff7f3);
+    --cover-dicom-bg:
+      linear-gradient(135deg, rgba(13, 17, 27, 0.96), rgba(36, 48, 72, 0.96)),
+      linear-gradient(90deg, rgba(91, 99, 241, 0.28), rgba(47, 125, 76, 0.2));
+    --cover-respira-bg:
+      radial-gradient(circle at 20% 24%, rgba(47, 125, 76, 0.18), transparent 170px),
+      linear-gradient(135deg, #e8f7ef, #eef5ff);
     --radius: 8px;
     color-scheme: light;
+  }
+
+  html[data-theme='dark'] {
+    --bg: #0a0d12;
+    --surface: #111720;
+    --surface-soft: #171f2b;
+    --text: #eef3fb;
+    --muted: #a7b0bf;
+    --line: #283241;
+    --line-strong: #3a4658;
+    --accent: #8992ff;
+    --accent-strong: #b4bbff;
+    --green: #76d39c;
+    --rose: #f090aa;
+    --shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
+    --shadow-soft: 0 14px 36px rgba(0, 0, 0, 0.24);
+    --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+    --button-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+    --primary-shadow: 0 14px 30px rgba(137, 146, 255, 0.18);
+    --body-bg:
+      linear-gradient(180deg, rgba(18, 22, 30, 0.96) 0, rgba(10, 13, 18, 1) 38rem),
+      #0a0d12;
+    --header-bg: rgba(12, 16, 23, 0.9);
+    --footer-bg: rgba(13, 18, 26, 0.84);
+    --hero-bg: rgba(15, 20, 29, 0.68);
+    --home-bg: rgba(13, 18, 26, 0.72);
+    --article-bg: rgba(13, 18, 26, 0.72);
+    --brand-bg: #151c27;
+    --tag-bg: #171f2b;
+    --tag-text: #c9d2df;
+    --link-muted: #c6cfde;
+    --nav-text: #dce4f0;
+    --icon-color: #eef3fb;
+    --content-text: #d9e1ec;
+    --meta-text: #aeb8c8;
+    --meta-divider: #667286;
+    --cover-border: #263141;
+    --cover-typescript-bg:
+      linear-gradient(135deg, rgba(66, 72, 142, 0.74), rgba(25, 55, 80, 0.9));
+    --cover-architecture-bg: linear-gradient(135deg, #172232, #111720);
+    --cover-growth-bg:
+      radial-gradient(circle at 55% 55%, rgba(118, 211, 156, 0.18), transparent 110px),
+      linear-gradient(135deg, #111d18, #1a2a21);
+    --cover-astro-bg:
+      radial-gradient(circle at 28% 24%, rgba(240, 144, 170, 0.18), transparent 170px),
+      linear-gradient(135deg, #141829, #261924);
+    --cover-dicom-bg:
+      linear-gradient(135deg, rgba(7, 10, 15, 0.98), rgba(22, 33, 49, 0.98)),
+      linear-gradient(90deg, rgba(137, 146, 255, 0.28), rgba(118, 211, 156, 0.2));
+    --cover-respira-bg:
+      radial-gradient(circle at 20% 24%, rgba(118, 211, 156, 0.18), transparent 170px),
+      linear-gradient(135deg, #0f1d19, #141d2a);
+    color-scheme: dark;
   }
 
   * {
@@ -72,15 +181,17 @@ const pageTitle = title === 'Kirin Blog' ? title : `${title} | Kirin Blog`;
   body {
     min-width: 320px;
     margin: 0;
-    background:
-      radial-gradient(circle at top left, rgba(91, 99, 241, 0.06), transparent 34rem),
-      linear-gradient(180deg, #ffffff 0, #f7f8fb 34rem);
+    background: var(--body-bg);
   }
 
   body,
   button,
   input {
     font: inherit;
+  }
+
+  button {
+    color: inherit;
   }
 
   a {
@@ -133,7 +244,7 @@ const pageTitle = title === 'Kirin Blog' ? title : `${title} | Kirin Blog`;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #424857;
+    color: var(--link-muted);
     font-weight: 650;
     white-space: nowrap;
   }
@@ -157,14 +268,14 @@ const pageTitle = title === 'Kirin Blog' ? title : `${title} | Kirin Blog`;
     background: var(--surface);
     color: var(--text);
     font-weight: 750;
-    box-shadow: 0 10px 22px rgba(25, 31, 48, 0.04);
+    box-shadow: var(--button-shadow);
   }
 
   .button.primary {
     border-color: transparent;
     background: var(--accent);
     color: white;
-    box-shadow: 0 14px 28px rgba(91, 99, 241, 0.22);
+    box-shadow: var(--primary-shadow);
   }
 
   .tag {
@@ -173,8 +284,8 @@ const pageTitle = title === 'Kirin Blog' ? title : `${title} | Kirin Blog`;
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 6px 10px;
-    background: #fff;
-    color: #4c5362;
+    background: var(--tag-bg);
+    color: var(--tag-text);
     font-size: 0.84rem;
     font-weight: 650;
   }
@@ -209,7 +320,7 @@ const pageTitle = title === 'Kirin Blog' ? title : `${title} | Kirin Blog`;
 
   .site-footer {
     border-top: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--footer-bg);
   }
 
   .footer-inner {

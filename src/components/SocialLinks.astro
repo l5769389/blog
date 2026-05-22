@@ -1,11 +1,9 @@
 ---
-import { CodeXml, Mail, MessageCircle, Network } from '@lucide/astro';
+import { CodeXml, Mail } from '@lucide/astro';
 
 const links = [
-  { href: 'https://github.com/', label: 'Code profile', Icon: CodeXml },
-  { href: 'https://x.com/', label: 'Social updates', Icon: MessageCircle },
-  { href: 'https://www.linkedin.com/', label: 'Professional network', Icon: Network },
-  { href: 'mailto:hello@example.com', label: 'Email', Icon: Mail },
+  { href: 'https://github.com/l5769389', label: 'GitHub home', Icon: CodeXml },
+  { href: 'mailto:5769389@qq.com', label: 'Email Kirin', Icon: Mail },
 ];
 ---
 
@@ -32,6 +30,6 @@ const links = [
     width: 30px;
     height: 30px;
     place-items: center;
-    color: #070a11;
+    color: var(--icon-color);
   }
 </style>

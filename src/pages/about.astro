@@ -1,36 +1,35 @@
 ---
-import { BriefcaseBusiness, CodeXml, Compass, Heart } from '@lucide/astro';
+import { BriefcaseBusiness, CodeXml, Compass, Mail } from '@lucide/astro';
 import Layout from '../layouts/Layout.astro';
 import SocialLinks from '../components/SocialLinks.astro';
 
 const values = [
   {
-    title: 'Build with clarity',
-    body: 'I like systems that are easy to explain, easy to change, and honest about their tradeoffs.',
+    title: 'Portfolio first',
+    body: 'I want this site to make projects easy to inspect: what problem they solve, what stack they use, and where the source lives.',
     Icon: CodeXml,
   },
   {
-    title: 'Write to learn',
-    body: 'Writing is how I turn scattered notes into something useful for future me and other builders.',
+    title: 'Readable build notes',
+    body: 'Blog posts will mostly be project notes: screenshots, architecture choices, implementation details, and lessons learned.',
     Icon: Compass,
   },
   {
-    title: 'Share the craft',
-    body: 'Good engineering culture grows through examples, reviews, small tools, and patient documentation.',
-    Icon: Heart,
+    title: 'Open connection',
+    body: 'GitHub is the main portfolio entry, and email is the fastest way to reach me about projects or collaboration.',
+    Icon: CodeXml,
   },
 ];
 ---
 
-<Layout title="About" description="About Kirin, the person behind Kirin Blog.">
+<Layout title="About" description="About Kirin, the person behind Kirin Works.">
   <section class="page-shell">
     <div class="container about-grid">
       <div class="page-header">
         <p class="eyebrow">About <strong>Kirin</strong></p>
-        <h1>Software engineer, product-minded builder, careful writer.</h1>
+        <h1>Software engineer building practical tools and project notes.</h1>
         <p>
-          I build web products, write about the practice of software, and keep
-          notes on the decisions that make small teams move with confidence.
+          这个站点会更像我的作品集入口：先展示 GitHub 项目和可视化成果，再逐步补充 blog、复盘和工程笔记。
         </p>
         <SocialLinks />
       </div>
@@ -40,6 +39,10 @@ const values = [
         <h2>Kirin</h2>
         <p>Hangzhou, China</p>
         <div class="role"><BriefcaseBusiness size={18} /> Software Engineer</div>
+        <div class="contact-actions">
+          <a href="https://github.com/l5769389"><CodeXml size={17} /> GitHub</a>
+          <a href="mailto:5769389@qq.com"><Mail size={17} /> Email</a>
+        </div>
       </aside>
     </div>
   </section>
@@ -66,13 +69,13 @@ const values = [
       <div class="timeline-list">
         <article>
           <span>2026</span>
-          <h3>Building a more useful personal knowledge base</h3>
-          <p>Collecting notes, essays, project logs, and repeatable patterns in one quiet place.</p>
+          <h3>Turning the site into a portfolio home</h3>
+          <p>整理项目截图、GitHub 链接和重点项目说明，让访问者可以更快理解我做过什么。</p>
         </article>
         <article>
           <span>Focus</span>
-          <h3>Astro, TypeScript, product engineering</h3>
-          <p>Exploring fast content sites, better frontend systems, and thoughtful developer tooling.</p>
+          <h3>DICOM tools, web apps, and project writing</h3>
+          <p>继续打磨 DicomVision，同时把后续项目沉淀成更完整的作品集条目和 blog 记录。</p>
         </article>
       </div>
     </div>
@@ -93,7 +96,7 @@ const values = [
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--surface);
-    box-shadow: 0 14px 36px rgba(25, 31, 48, 0.05);
+    box-shadow: var(--shadow-soft);
   }
 
   .about-card {
@@ -161,7 +164,26 @@ const values = [
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    color: #414858;
+    color: var(--link-muted);
+    font-weight: 750;
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .contact-actions a {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0 13px;
+    color: var(--link-muted);
     font-weight: 750;
   }
 

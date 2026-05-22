@@ -16,7 +16,7 @@ const tags = posts.reduce<Record<string, typeof posts>>((acc, post) => {
 const tagEntries = Object.entries(tags).sort(([a], [b]) => a.localeCompare(b));
 ---
 
-<Layout title="Tags" description="Browse Kirin Blog articles by tag.">
+<Layout title="Tags" description="Browse Kirin Works notes by tag.">
   <section class="page-shell">
     <div class="container">
       <div class="page-header">
@@ -88,7 +88,7 @@ const tagEntries = Object.entries(tags).sort(([a], [b]) => a.localeCompare(b));
     border-radius: var(--radius);
     padding: 24px;
     background: var(--surface);
-    box-shadow: 0 14px 36px rgba(25, 31, 48, 0.05);
+    box-shadow: var(--shadow-soft);
     scroll-margin-top: 120px;
   }
 
