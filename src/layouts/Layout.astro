@@ -15,7 +15,7 @@ const pageTitle = title === 'Kirin Works' ? title : `${title} | Kirin Works`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -40,6 +40,17 @@ const pageTitle = title === 'Kirin Works' ? title : `${title} | Kirin Works`;
         } catch {
           document.documentElement.dataset.theme = fallbackTheme;
         }
+
+        try {
+          const savedLang = localStorage.getItem('lang');
+          const lang = savedLang === 'en' || savedLang === 'zh' ? savedLang : 'zh';
+
+          document.documentElement.dataset.lang = lang;
+          document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
+        } catch {
+          document.documentElement.dataset.lang = 'zh';
+          document.documentElement.lang = 'zh-CN';
+        }
       })();
     </script>
   </head>
@@ -48,12 +59,65 @@ const pageTitle = title === 'Kirin Works' ? title : `${title} | Kirin Works`;
     <main>
       <slot />
     </main>
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <p>© 2026 Kirin Works</p>
-        <a href="mailto:5769389@qq.com">5769389@qq.com</a>
-      </div>
-    </footer>
+    <script is:inline>
+      (() => {
+        const langKey = 'lang';
+        const getLang = () => (document.documentElement.dataset.lang === 'en' ? 'en' : 'zh');
+
+        const setLocalizedAttribute = (element, attr, lang) => {
+          const value = element.getAttribute(`data-i18n-${attr}-${lang}`);
+
+          if (value !== null) {
+            element.setAttribute(attr, value);
+          }
+        };
+
+        const applyLanguage = () => {
+          const lang = getLang();
+
+          document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
+
+          document.querySelectorAll('[data-i18n-zh][data-i18n-en]').forEach((element) => {
+            const value = element.getAttribute(`data-i18n-${lang}`);
+
+            if (value !== null) {
+              element.textContent = value;
+            }
+          });
+
+          document.querySelectorAll('[data-i18n-title-zh][data-i18n-title-en]').forEach((element) => {
+            setLocalizedAttribute(element, 'title', lang);
+          });
+
+          document.querySelectorAll('[data-i18n-aria-label-zh][data-i18n-aria-label-en]').forEach((element) => {
+            setLocalizedAttribute(element, 'aria-label', lang);
+          });
+        };
+
+        document.addEventListener('click', (event) => {
+          const button = event.target instanceof Element
+            ? event.target.closest('[data-lang-toggle]')
+            : null;
+
+          if (!(button instanceof HTMLButtonElement)) {
+            return;
+          }
+
+          const nextLang = getLang() === 'en' ? 'zh' : 'en';
+          document.documentElement.dataset.lang = nextLang;
+
+          try {
+            localStorage.setItem(langKey, nextLang);
+          } catch {
+            // The visible page still updates even when localStorage is unavailable.
+          }
+
+          applyLanguage();
+        });
+
+        applyLanguage();
+      })();
+    </script>
   </body>
 </html>
 
@@ -109,6 +173,9 @@ const pageTitle = title === 'Kirin Works' ? title : `${title} | Kirin Works`;
     --cover-respira-bg:
       radial-gradient(circle at 20% 24%, rgba(47, 125, 76, 0.18), transparent 170px),
       linear-gradient(135deg, #e8f7ef, #eef5ff);
+    --cover-note-bg:
+      radial-gradient(circle at 24% 22%, rgba(91, 99, 241, 0.14), transparent 170px),
+      linear-gradient(135deg, #f3f7ff, #eef8f1);
     --radius: 8px;
     color-scheme: light;
   }
@@ -163,6 +230,9 @@ const pageTitle = title === 'Kirin Works' ? title : `${title} | Kirin Works`;
     --cover-respira-bg:
       radial-gradient(circle at 20% 24%, rgba(118, 211, 156, 0.18), transparent 170px),
       linear-gradient(135deg, #0f1d19, #141d2a);
+    --cover-note-bg:
+      radial-gradient(circle at 24% 22%, rgba(137, 146, 255, 0.18), transparent 170px),
+      linear-gradient(135deg, #111827, #14211c);
     color-scheme: dark;
   }
 
@@ -318,25 +388,6 @@ const pageTitle = title === 'Kirin Works' ? title : `${title} | Kirin Works`;
     gap: 22px;
   }
 
-  .site-footer {
-    border-top: 1px solid var(--line);
-    background: var(--footer-bg);
-  }
-
-  .footer-inner {
-    display: flex;
-    min-height: 76px;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    color: var(--muted);
-    font-size: 0.95rem;
-  }
-
-  .footer-inner p {
-    margin: 0;
-  }
-
   @media (max-width: 760px) {
     .container {
       width: min(100% - 28px, 1320px);
@@ -355,11 +406,5 @@ const pageTitle = title === 'Kirin Works' ? title : `${title} | Kirin Works`;
       width: 100%;
     }
 
-    .footer-inner {
-      align-items: flex-start;
-      flex-direction: column;
-      justify-content: center;
-      padding: 18px 0;
-    }
   }
 </style>

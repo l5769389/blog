@@ -1,8 +1,9 @@
 ---
-import { CodeXml, Mail } from '@lucide/astro';
+import { Mail } from '@lucide/astro';
+import GitHubIcon from './GitHubIcon.astro';
 
 const links = [
-  { href: 'https://github.com/l5769389', label: 'GitHub home', Icon: CodeXml },
+  { href: 'https://github.com/l5769389', label: 'GitHub home', Icon: GitHubIcon },
   { href: 'mailto:5769389@qq.com', label: 'Email Kirin', Icon: Mail },
 ];
 ---
@@ -11,7 +12,7 @@ const links = [
   {
     links.map(({ href, label, Icon }) => (
       <a href={href} aria-label={label} title={label}>
-        <Icon size={25} stroke-width={2.15} />
+        <Icon size={25} />
       </a>
     ))
   }

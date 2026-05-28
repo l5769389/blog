@@ -1,27 +1,51 @@
 ---
-import { ArrowRight, BriefcaseBusiness, CodeXml, Mail, MapPin } from '@lucide/astro';
+import { Mail } from '@lucide/astro';
+import GitHubIcon from './GitHubIcon.astro';
+
+const chips = [
+  { zh: '上海', en: 'Shanghai' },
+  { zh: '全栈工程师', en: 'Full-Stack Engineer' },
+  { zh: '中国科学技术大学', en: 'USTC' },
+  { zh: '医学影像 / 信号处理', en: 'Medical Imaging / Signal Processing' },
+];
 ---
 
 <aside class="profile-card" aria-label="About Kirin">
-  <h2>About Me</h2>
-  <div class="profile-row">
+  <h2 class="card-title" data-i18n-zh="关于我" data-i18n-en="About Me">关于我</h2>
+  <div class="profile-head">
     <div class="avatar" aria-hidden="true">
       <span></span>
     </div>
-    <p>
-      I'm Kirin, a software engineer focused on practical tools, portfolio
-      projects, and readable project notes.
-    </p>
+    <div>
+      <h2>Kirin</h2>
+      <p
+        class="summary"
+        data-i18n-zh="构建医学影像、实时信号处理和 Web 工具。"
+        data-i18n-en="Building medical imaging, real-time signal, and web tools."
+      >
+        构建医学影像、实时信号处理和 Web 工具。
+      </p>
+    </div>
   </div>
-  <ul class="facts">
-    <li><MapPin size={18} /> Hangzhou, China</li>
-    <li><BriefcaseBusiness size={18} /> Software Engineer</li>
-    <li><CodeXml size={18} /> <a href="https://github.com/l5769389">github.com/l5769389</a></li>
-    <li><Mail size={18} /> <a href="mailto:5769389@qq.com">5769389@qq.com</a></li>
-  </ul>
-  <a class="profile-link" href="/about">
-    View full profile <ArrowRight size={17} stroke-width={2.2} />
-  </a>
+
+  <div class="chip-list" aria-label="Profile highlights">
+    {
+      chips.map((chip) => (
+        <span data-i18n-zh={chip.zh} data-i18n-en={chip.en}>{chip.zh}</span>
+      ))
+    }
+  </div>
+
+  <div class="contact-grid">
+    <a href="https://github.com/l5769389">
+      <GitHubIcon size={18} />
+      <span>GitHub</span>
+    </a>
+    <a href="mailto:5769389@qq.com">
+      <Mail size={18} />
+      <span>Email</span>
+    </a>
+  </div>
 </aside>
 
 <style>
@@ -33,23 +57,24 @@ import { ArrowRight, BriefcaseBusiness, CodeXml, Mail, MapPin } from '@lucide/as
     box-shadow: var(--shadow);
   }
 
-  h2 {
-    margin: 0 0 20px;
+  .card-title {
+    margin: 0 0 22px;
+    color: var(--accent-strong);
     font-size: 1.35rem;
     line-height: 1.2;
   }
 
-  .profile-row {
+  .profile-head {
     display: grid;
     align-items: center;
-    grid-template-columns: 96px 1fr;
-    gap: 20px;
+    grid-template-columns: 112px 1fr;
+    gap: 22px;
   }
 
   .avatar {
     position: relative;
     overflow: hidden;
-    width: 92px;
+    width: 112px;
     aspect-ratio: 1;
     border-radius: 50%;
     background:
@@ -66,79 +91,88 @@ import { ArrowRight, BriefcaseBusiness, CodeXml, Mail, MapPin } from '@lucide/as
   }
 
   .avatar::before {
-    top: 25px;
-    left: 33px;
-    width: 28px;
-    height: 31px;
+    top: 30px;
+    left: 40px;
+    width: 34px;
+    height: 38px;
     border-radius: 50%;
     background: #202633;
   }
 
   .avatar::after {
-    right: 18px;
-    bottom: 11px;
-    width: 58px;
-    height: 45px;
+    right: 21px;
+    bottom: 13px;
+    width: 70px;
+    height: 54px;
     border-radius: 35px 35px 14px 14px;
     background: #1b2230;
     transform: rotate(12deg);
   }
 
   .avatar span {
-    right: 19px;
-    bottom: 36px;
+    right: 23px;
+    bottom: 44px;
     z-index: 1;
-    width: 22px;
-    height: 18px;
+    width: 27px;
+    height: 22px;
     border-radius: 50%;
     background: #d3a58f;
   }
 
-  p {
+  h2 {
+    margin: 0 0 7px;
+    font-size: 1.85rem;
+    line-height: 1.15;
+  }
+
+  .summary {
     margin: 0;
     color: var(--muted);
-    font-size: 0.97rem;
-    line-height: 1.55;
+    font-size: 1rem;
+    line-height: 1.65;
   }
 
-  .facts {
+  .chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin: 24px 0 20px;
+  }
+
+  .chip-list span {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 10px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 0.84rem;
+    font-weight: 700;
+  }
+
+  .contact-grid {
     display: grid;
-    gap: 14px;
-    margin: 24px 0;
-    padding: 0;
-    color: var(--muted);
-    font-size: 0.93rem;
-    list-style: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
-  .facts li {
+  .contact-grid a {
     display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .facts a {
-    color: inherit;
-  }
-
-  .facts svg {
-    color: var(--icon-color);
-  }
-
-  .profile-link {
-    display: flex;
-    min-height: 44px;
+    min-height: 42px;
     align-items: center;
     justify-content: center;
     gap: 8px;
     border: 1px solid var(--line);
     border-radius: var(--radius);
     color: var(--link-muted);
-    font-weight: 700;
+    font-weight: 750;
+  }
+
+  .contact-grid svg {
+    color: var(--icon-color);
   }
 
   @media (max-width: 560px) {
-    .profile-row {
+    .profile-head {
       grid-template-columns: 1fr;
     }
   }

@@ -1,14 +1,18 @@
 ---
-import { Activity, ArrowRight, ArrowUpRight, Layers } from '@lucide/astro';
+import { Activity, ArrowRight, BookOpenText, Layers } from '@lucide/astro';
+import GitHubIcon from '../components/GitHubIcon.astro';
 import Layout from '../layouts/Layout.astro';
 
 const projects = [
   {
     name: 'RespiraScope',
-    description:
+    descriptionZh:
       '呼吸信号采集、实时滤波、峰谷识别、BPM 计算、记录复盘和 Web Console 展示工具。',
+    descriptionEn:
+      'A respiration signal tool for acquisition, filtering, peak detection, BPM, recording review, and Web Console monitoring.',
     tech: ['FastAPI', 'Socket.IO', 'Signal Processing', 'PyInstaller'],
-    status: 'Featured',
+    statusZh: '代表项目',
+    statusEn: 'Selected',
     noteHref: '/blog/respira-scope-realtime-breath-workbench',
     githubHref: 'https://github.com/l5769389/RespiraScope',
     image: '/images/respira-scope/breath-monitor.png',
@@ -16,14 +20,31 @@ const projects = [
   },
   {
     name: 'DicomVision',
-    description:
+    descriptionZh:
       '面向 DICOM 阅片、MPR 重建、测量分析、DICOM 标签检查和 QA 流程的医学影像工作台。',
+    descriptionEn:
+      'A medical imaging workbench for DICOM viewing, MPR reconstruction, measurement, DICOM tags, and QA workflows.',
     tech: ['Vue 3', 'FastAPI', 'Electron', 'DICOM'],
-    status: 'Featured',
+    statusZh: '代表项目',
+    statusEn: 'Selected',
     noteHref: '/blog/dicom-vision-imaging-workbench',
     githubHref: 'https://github.com/l5769389/DicomVisionClient',
     image: '/images/dicom-vision/theme-dark.png',
     Icon: Layers,
+  },
+  {
+    name: 'noteDock',
+    descriptionZh:
+      '本地优先的 Markdown 编辑器和文档工作台，支持多格式预览、图形嵌入和知识关系整理。',
+    descriptionEn:
+      'A local-first Markdown editor and document workspace with previews, diagrams, and knowledge links.',
+    tech: ['Electron', 'React', 'Milkdown', 'Excalidraw'],
+    statusZh: '工具项目',
+    statusEn: 'Tooling',
+    noteHref: '/blog/notedock-local-markdown-workbench',
+    githubHref: 'https://github.com/l5769389/note',
+    image: '/images/note-dock/todo-card-mockup.png',
+    Icon: BookOpenText,
   },
 ];
 ---
@@ -31,17 +52,14 @@ const projects = [
 <Layout title="Projects" description="Selected portfolio projects from Kirin.">
   <section class="page-shell">
     <div class="container">
-      <div class="page-header">
+      <div class="page-header compact-header">
         <p class="eyebrow"><strong>Projects</strong></p>
-        <h1>两个重点作品集项目。</h1>
-        <p>
-          这里不再把 GitHub 主页当成一个项目，而是直接展示 RespiraScope 和 DicomVision。每个项目都提供源码入口和对应的项目复盘，方便快速判断项目形态与实现深度。
-        </p>
+        <h1 data-i18n-zh="代表作品集项目。" data-i18n-en="Selected portfolio projects.">代表作品集项目。</h1>
       </div>
 
       <div class="projects-grid">
         {
-          projects.map(({ name, description, tech, status, noteHref, githubHref, image, Icon }) => (
+          projects.map(({ name, descriptionZh, descriptionEn, tech, statusZh, statusEn, noteHref, githubHref, image, Icon }) => (
             <article class="project-card">
               <a class="project-image" href={noteHref} aria-label={`Open ${name} case note`}>
                 <img src={image} alt={`${name} project screenshot`} />
@@ -49,10 +67,12 @@ const projects = [
               <div class="project-body">
                 <div class="project-top">
                   <Icon size={28} stroke-width={2.1} />
-                  <span>{status}</span>
+                  <span data-i18n-zh={statusZh} data-i18n-en={statusEn}>{statusZh}</span>
                 </div>
                 <h2>{name}</h2>
-                <p>{description}</p>
+                <p class="project-description" data-i18n-zh={descriptionZh} data-i18n-en={descriptionEn}>
+                  {descriptionZh}
+                </p>
                 <div class="tech-list">
                   {tech.map((item) => (
                     <span class="tag">{item}</span>
@@ -60,10 +80,12 @@ const projects = [
                 </div>
                 <div class="project-links">
                   <a href={noteHref} aria-label={`Read ${name} case note`}>
-                    项目复盘 <ArrowRight size={17} stroke-width={2.2} />
+                    <span data-i18n-zh="项目复盘" data-i18n-en="Project note">项目复盘</span>
+                    <ArrowRight size={17} stroke-width={2.2} />
                   </a>
                   <a href={githubHref} aria-label={`Open ${name} on GitHub`}>
-                    GitHub 源码 <ArrowUpRight size={17} stroke-width={2.2} />
+                    <span data-i18n-zh="GitHub 源码" data-i18n-en="Source">GitHub 源码</span>
+                    <GitHubIcon size={17} />
                   </a>
                 </div>
               </div>
@@ -76,18 +98,25 @@ const projects = [
 </Layout>
 
 <style>
+  .compact-header {
+    margin-bottom: 42px;
+  }
+
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 22px;
   }
 
   .project-card {
+    display: grid;
     overflow: hidden;
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--surface);
     box-shadow: var(--shadow-soft);
+    grid-template-rows: auto 1fr;
   }
 
   .project-image {
@@ -105,64 +134,109 @@ const projects = [
   }
 
   .project-body {
+    display: flex;
+    min-height: 430px;
+    flex-direction: column;
     padding: 26px;
   }
 
   .project-top {
     display: flex;
+    min-height: 42px;
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    margin-bottom: 28px;
+    margin-bottom: 26px;
   }
 
   .project-top svg {
+    flex: 0 0 auto;
     color: var(--accent-strong);
   }
 
   .project-top span {
+    flex: 0 0 auto;
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 6px 10px;
     color: var(--tag-text);
     font-size: 0.82rem;
     font-weight: 750;
+    line-height: 1;
   }
 
   h2 {
+    min-height: 44px;
     margin: 0 0 12px;
     font-size: 1.55rem;
+    line-height: 1.25;
   }
 
-  p {
+  .project-description {
+    display: -webkit-box;
+    min-height: 86px;
     margin: 0;
+    overflow: hidden;
     color: var(--muted);
-    line-height: 1.75;
+    line-height: 1.72;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
   }
 
   .tech-list {
     display: flex;
+    height: 88px;
+    align-content: flex-start;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px 8px;
     margin-top: 24px;
+    overflow: hidden;
+  }
+
+  .project-card .tag {
+    min-height: 34px;
+    line-height: 1.15;
   }
 
   .project-links {
     display: flex;
+    min-height: 34px;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 18px;
-    margin-top: 28px;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 24px;
   }
 
   .project-links a {
     display: inline-flex;
+    min-height: 34px;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 0 2px;
     color: var(--accent-strong);
     font-weight: 800;
+    line-height: 1;
   }
 
-  @media (max-width: 980px) {
+  .project-links a span {
+    line-height: 1;
+  }
+
+  .project-links a svg {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+  }
+
+  @media (max-width: 1120px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 740px) {
     .projects-grid {
       grid-template-columns: 1fr;
     }
@@ -170,7 +244,15 @@ const projects = [
 
   @media (max-width: 560px) {
     .project-body {
+      min-height: 0;
       padding: 22px;
+    }
+
+    h2,
+    .project-description,
+    .tech-list {
+      min-height: 0;
+      height: auto;
     }
   }
 </style>

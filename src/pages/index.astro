@@ -1,6 +1,7 @@
 ---
-import { ArrowRight, ArrowUpRight, CodeXml, Mail } from '@lucide/astro';
+import { ArrowRight, Mail } from '@lucide/astro';
 import { getCollection } from 'astro:content';
+import GitHubIcon from '../components/GitHubIcon.astro';
 import PostCard from '../components/PostCard.astro';
 import ProfileCard from '../components/ProfileCard.astro';
 import Layout from '../layouts/Layout.astro';
@@ -13,8 +14,9 @@ const portfolioProjects = [
   {
     name: 'RespiraScope',
     area: 'Respiration / Signal Processing',
-    description:
-      '呼吸信号采集、实时滤波、峰谷识别、BPM 计算和 Web Console 监测工具。',
+    descriptionZh: '呼吸信号采集、实时滤波、峰谷识别、BPM 计算和 Web Console 监测工具。',
+    descriptionEn:
+      'A real-time respiration signal console for acquisition, filtering, peak detection, BPM, and monitoring.',
     noteHref: '/blog/respira-scope-realtime-breath-workbench',
     githubHref: 'https://github.com/l5769389/RespiraScope',
     image: '/images/respira-scope/breath-monitor.png',
@@ -23,14 +25,28 @@ const portfolioProjects = [
   {
     name: 'DicomVision',
     area: 'DICOM / Medical Imaging',
-    description:
-      'DICOM 阅片、MPR 重建、测量分析、标签检查和 QA 流程的影像工作台。',
+    descriptionZh: 'DICOM 阅片、MPR 重建、测量分析、标签检查和 QA 流程的影像工作台。',
+    descriptionEn:
+      'A medical imaging workbench for DICOM viewing, MPR reconstruction, measurement, tags, and QA workflows.',
     noteHref: '/blog/dicom-vision-imaging-workbench',
     githubHref: 'https://github.com/l5769389/DicomVisionClient',
     image: '/images/dicom-vision/theme-dark.png',
     tags: ['Vue 3', 'FastAPI', 'Electron', 'Socket.IO'],
   },
+  {
+    name: 'noteDock',
+    area: 'Local Notes / Markdown',
+    descriptionZh: '本地优先的 Markdown 编辑、文档预览、图形嵌入和知识关系工作台。',
+    descriptionEn:
+      'A local-first Markdown editor, document reader, diagram workspace, and knowledge tool.',
+    noteHref: '/blog/notedock-local-markdown-workbench',
+    githubHref: 'https://github.com/l5769389/note',
+    image: '/images/note-dock/todo-card-mockup.png',
+    tags: ['Electron', 'React', 'Markdown', 'Excalidraw'],
+  },
 ];
+
+const currentProject = portfolioProjects[0];
 ---
 
 <Layout
@@ -40,52 +56,58 @@ const portfolioProjects = [
   <section class="hero">
     <div class="container hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow"><strong>Portfolio</strong> / Kirin</p>
-        <h1>作品集和工程复盘。</h1>
+        <p class="eyebrow"><strong>Portfolio</strong> / Kirin Works</p>
+        <h1 data-i18n-zh="全栈工程作品集。" data-i18n-en="Full-stack engineering portfolio.">全栈工程作品集。</h1>
         <p class="intro">
-          这里优先展示我现在最想呈现的两个 GitHub 项目：RespiraScope 和 DicomVision。Blog 会作为补充，记录项目复盘、技术取舍和后续开发笔记。
+          <span
+            data-i18n-zh="医学影像、实时信号处理和本地知识工具方向的项目实践。"
+            data-i18n-en="Project work across medical imaging, real-time signal processing, and local knowledge tools."
+          >
+            医学影像、实时信号处理和本地知识工具方向的项目实践。
+          </span>
         </p>
         <div class="button-row">
           <a class="button primary" href="/projects">
-            View Projects <ArrowRight size={18} stroke-width={2.2} />
+            <span data-i18n-zh="查看项目" data-i18n-en="View projects">查看项目</span>
+            <ArrowRight size={18} stroke-width={2.2} />
           </a>
           <a class="button" href="https://github.com/l5769389">
-            <CodeXml size={18} stroke-width={2.2} /> GitHub 主页
+            <GitHubIcon size={18} />
+            <span data-i18n-zh="GitHub 主页" data-i18n-en="GitHub">GitHub 主页</span>
           </a>
           <a class="button quiet" href="mailto:5769389@qq.com">
-            <Mail size={18} stroke-width={2.2} /> Contact
+            <Mail size={18} stroke-width={2.2} />
+            <span data-i18n-zh="联系我" data-i18n-en="Contact">联系我</span>
           </a>
         </div>
       </div>
 
-      <aside class="showcase-panel" aria-label="Portfolio project preview">
-        <div class="panel-heading">
-          <p>Featured Projects</p>
-          <span>2 works</span>
-        </div>
-        <div class="showcase-list">
-          {
-            portfolioProjects.map((project) => (
-              <article class="showcase-item">
-                <a class="showcase-image" href={project.noteHref} aria-label={`Open ${project.name}`}>
-                  <img src={project.image} alt={`${project.name} project screenshot`} />
-                </a>
-                <div>
-                  <span>{project.area}</span>
-                  <h2>{project.name}</h2>
-                  <p>{project.description}</p>
-                  <div class="panel-links">
-                    <a href={project.noteHref}>
-                      复盘 <ArrowRight size={16} stroke-width={2.2} />
-                    </a>
-                    <a href={project.githubHref}>
-                      GitHub <ArrowUpRight size={16} stroke-width={2.2} />
-                    </a>
-                  </div>
-                </div>
-              </article>
-            ))
-          }
+      <aside class="hero-project" aria-label="Current featured project">
+        <a class="hero-image" href={currentProject.noteHref} aria-label={`Open ${currentProject.name}`}>
+          <img src={currentProject.image} alt={`${currentProject.name} project screenshot`} />
+        </a>
+        <div class="hero-project-body">
+          <div class="project-label">
+            <span data-i18n-zh="当前展示" data-i18n-en="Featured">当前展示</span>
+            <strong>{currentProject.area}</strong>
+          </div>
+          <h2>{currentProject.name}</h2>
+          <p data-i18n-zh={currentProject.descriptionZh} data-i18n-en={currentProject.descriptionEn}>
+            {currentProject.descriptionZh}
+          </p>
+          <div class="tech-list compact-tags">
+            {currentProject.tags.map((item) => <span class="tag">{item}</span>)}
+          </div>
+          <div class="card-links">
+            <a href={currentProject.noteHref}>
+              <span data-i18n-zh="阅读复盘" data-i18n-en="Read note">阅读复盘</span>
+              <ArrowRight size={17} stroke-width={2.2} />
+            </a>
+            <a href={currentProject.githubHref}>
+              <span data-i18n-zh="GitHub 源码" data-i18n-en="Source">GitHub 源码</span>
+              <GitHubIcon size={17} />
+            </a>
+          </div>
         </div>
       </aside>
     </div>
@@ -94,9 +116,10 @@ const portfolioProjects = [
   <section class="work-section">
     <div class="container">
       <div class="section-heading">
-        <h2>Portfolio Projects</h2>
+        <h2 data-i18n-zh="代表项目" data-i18n-en="Selected Work">代表项目</h2>
         <a class="section-link" href="/projects">
-          View all projects <ArrowRight size={17} stroke-width={2.2} />
+          <span data-i18n-zh="查看全部" data-i18n-en="View all">查看全部</span>
+          <ArrowRight size={17} stroke-width={2.2} />
         </a>
       </div>
       <div class="work-grid">
@@ -109,16 +132,20 @@ const portfolioProjects = [
               <div class="work-body">
                 <span>{project.area}</span>
                 <h3>{project.name}</h3>
-                <p>{project.description}</p>
+                <p data-i18n-zh={project.descriptionZh} data-i18n-en={project.descriptionEn}>
+                  {project.descriptionZh}
+                </p>
                 <div class="tech-list">
                   {project.tags.map((item) => <span class="tag">{item}</span>)}
                 </div>
                 <div class="card-links">
                   <a href={project.noteHref}>
-                    Read case note <ArrowRight size={17} stroke-width={2.2} />
+                    <span data-i18n-zh="阅读复盘" data-i18n-en="Read note">阅读复盘</span>
+                    <ArrowRight size={17} stroke-width={2.2} />
                   </a>
                   <a href={project.githubHref}>
-                    Source <ArrowUpRight size={17} stroke-width={2.2} />
+                    <span data-i18n-zh="源码" data-i18n-en="Source">源码</span>
+                    <GitHubIcon size={17} />
                   </a>
                 </div>
               </div>
@@ -133,13 +160,14 @@ const portfolioProjects = [
     <div class="container content-grid">
       <div class="featured">
         <div class="section-heading">
-          <h2>Project Notes & Blog</h2>
+          <h2 data-i18n-zh="项目复盘" data-i18n-en="Project Notes">项目复盘</h2>
           <a class="section-link" href="/blog">
-            View all posts <ArrowRight size={17} stroke-width={2.2} />
+            <span data-i18n-zh="全部文章" data-i18n-en="All posts">全部文章</span>
+            <ArrowRight size={17} stroke-width={2.2} />
           </a>
         </div>
-        <div class="posts-grid">
-          {featuredPosts.map((post) => <PostCard post={post} />)}
+        <div class="notes-list">
+          {featuredPosts.map((post) => <PostCard post={post} compact />)}
         </div>
       </div>
       <ProfileCard />
@@ -187,7 +215,7 @@ const portfolioProjects = [
     color: var(--link-muted);
   }
 
-  .showcase-panel,
+  .hero-project,
   .work-card {
     min-width: 0;
     border: 1px solid var(--line);
@@ -196,45 +224,11 @@ const portfolioProjects = [
     box-shadow: var(--shadow-soft);
   }
 
-  .showcase-panel {
-    padding: 20px;
+  .hero-project {
+    overflow: hidden;
   }
 
-  .panel-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  .panel-heading p {
-    margin: 0;
-    color: var(--accent-strong);
-    font-size: 0.86rem;
-    font-weight: 850;
-  }
-
-  .panel-heading span {
-    color: var(--muted);
-    font-size: 0.86rem;
-    font-weight: 700;
-  }
-
-  .showcase-list {
-    display: grid;
-    gap: 16px;
-  }
-
-  .showcase-item {
-    display: grid;
-    align-items: center;
-    grid-template-columns: minmax(210px, 42%) 1fr;
-    gap: 20px;
-    min-width: 0;
-  }
-
-  .showcase-image,
+  .hero-image,
   .work-image {
     display: block;
     overflow: hidden;
@@ -243,7 +237,7 @@ const portfolioProjects = [
     background: #080d13;
   }
 
-  .showcase-image img,
+  .hero-image img,
   .work-image img {
     width: 100%;
     max-width: 100%;
@@ -251,44 +245,105 @@ const portfolioProjects = [
     object-fit: cover;
   }
 
-  .showcase-item span,
-  .work-card span {
+  .hero-image {
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+  }
+
+  .hero-project-body {
+    padding: 26px;
+  }
+
+  .project-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 10px;
+  }
+
+  .project-label span {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 10px;
+    color: var(--tag-text);
+    font-size: 0.82rem;
+    font-weight: 750;
+  }
+
+  .project-label strong,
+  .work-body > span {
     display: inline-flex;
-    margin: 0 0 8px;
+    margin-bottom: 8px;
     color: var(--accent-strong);
     font-size: 0.84rem;
     font-weight: 850;
   }
 
-  .showcase-item h2,
+  .hero-project h2,
   .work-card h3 {
     margin: 0 0 8px;
-    font-size: 1.35rem;
+    font-size: 1.45rem;
     line-height: 1.2;
   }
 
-  .showcase-item p,
+  .work-card h3 {
+    min-height: 36px;
+  }
+
+  .hero-project p,
   .work-card p {
     margin: 0;
     color: var(--muted);
     line-height: 1.72;
   }
 
-  .panel-links,
+  .work-card p {
+    display: -webkit-box;
+    min-height: 84px;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
   .card-links {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
     margin-top: 16px;
   }
 
-  .panel-links a,
+  .work-card .card-links {
+    margin-top: auto;
+    padding-top: 22px;
+  }
+
   .card-links a {
     display: inline-flex;
+    min-height: 34px;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 0 2px;
     color: var(--accent-strong);
     font-weight: 800;
+    line-height: 1;
+  }
+
+  .card-links a span {
+    margin: 0;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: 1;
+  }
+
+  .card-links a svg {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
   }
 
   .work-section {
@@ -299,12 +354,15 @@ const portfolioProjects = [
 
   .work-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 22px;
   }
 
   .work-card {
+    display: grid;
     overflow: hidden;
+    grid-template-rows: auto 1fr;
   }
 
   .work-image {
@@ -314,14 +372,30 @@ const portfolioProjects = [
   }
 
   .work-body {
+    display: flex;
+    min-height: 364px;
+    flex-direction: column;
     padding: 24px;
   }
 
   .tech-list {
     display: flex;
+    height: 88px;
+    align-content: flex-start;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px 8px;
     margin-top: 20px;
+    overflow: hidden;
+  }
+
+  .work-card .tag {
+    min-height: 34px;
+    line-height: 1.15;
+  }
+
+  .compact-tags {
+    height: auto;
+    margin-top: 18px;
   }
 
   .home-content {
@@ -340,10 +414,9 @@ const portfolioProjects = [
     min-width: 0;
   }
 
-  .posts-grid {
+  .notes-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
+    gap: 18px;
   }
 
   @media (max-width: 1180px) {
@@ -360,12 +433,15 @@ const portfolioProjects = [
     .hero-copy {
       max-width: 760px;
     }
+
+    .work-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
-  @media (max-width: 900px) {
-    .showcase-item,
+  @media (max-width: 760px) {
     .work-grid,
-    .posts-grid {
+    .notes-list {
       grid-template-columns: 1fr;
     }
   }
@@ -394,9 +470,17 @@ const portfolioProjects = [
       max-width: calc(100vw - 28px);
     }
 
-    .showcase-panel,
+    .hero-project-body,
     .work-body {
       padding: 22px;
+    }
+
+    .work-body,
+    .work-card h3,
+    .work-card p,
+    .tech-list {
+      min-height: 0;
+      height: auto;
     }
   }
 </style>

@@ -1,12 +1,12 @@
 ---
-import { CodeXml, Moon, Sun } from '@lucide/astro';
+import { Moon, Sun } from '@lucide/astro';
+import GitHubIcon from './GitHubIcon.astro';
 
 const navItems = [
-  { href: '/', label: 'Home' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/about', label: 'About' },
-  { href: '/projects', label: 'Projects' },
-  { href: '/tags', label: 'Tags' },
+  { href: '/', labelZh: '首页', labelEn: 'Home' },
+  { href: '/blog', labelZh: '博客', labelEn: 'Blog' },
+  { href: '/projects', labelZh: '项目', labelEn: 'Projects' },
+  { href: '/tags', labelZh: '标签', labelEn: 'Tags' },
 ];
 
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -24,8 +24,13 @@ const isActive = (href: string) =>
     <nav class="nav-links" aria-label="Main navigation">
       {
         navItems.map((item) => (
-          <a class:list={['nav-link', { active: isActive(item.href) }]} href={item.href}>
-            {item.label}
+          <a
+            class:list={['nav-link', { active: isActive(item.href) }]}
+            href={item.href}
+            data-i18n-zh={item.labelZh}
+            data-i18n-en={item.labelEn}
+          >
+            {item.labelZh}
           </a>
         ))
       }
@@ -40,8 +45,21 @@ const isActive = (href: string) =>
           <Moon size={22} stroke-width={2.2} />
         </span>
       </button>
+      <button
+        type="button"
+        class="lang-button"
+        data-lang-toggle
+        aria-label="Switch language"
+        title="Switch language"
+        data-i18n-aria-label-zh="切换到英文"
+        data-i18n-aria-label-en="Switch to Chinese"
+        data-i18n-title-zh="切换到英文"
+        data-i18n-title-en="Switch to Chinese"
+      >
+        <span class="lang-current" data-i18n-zh="EN" data-i18n-en="中">EN</span>
+      </button>
       <a href="https://github.com/l5769389" aria-label="GitHub home" title="GitHub home">
-        <CodeXml size={22} stroke-width={2.3} />
+        <GitHubIcon size={22} />
       </a>
     </div>
   </div>
@@ -185,6 +203,24 @@ const isActive = (href: string) =>
     background: transparent;
     color: var(--icon-color);
     cursor: pointer;
+  }
+
+  .nav-actions .lang-button {
+    display: inline-grid;
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    font-size: 0.84rem;
+    font-weight: 850;
+  }
+
+  .lang-current {
+    color: var(--icon-color);
+    line-height: 1;
   }
 
   [data-theme-icon-light],

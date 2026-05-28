@@ -9,15 +9,20 @@ const posts = sortPosts(await getCollection('blog'));
 
 <Layout
   title="Blog"
-  description="Project notes, build logs, and later long-form writing from Kirin."
+  description="Project notes and engineering articles from Kirin."
 >
   <section class="page-shell">
     <div class="container">
       <div class="page-header">
         <p class="eyebrow"><strong>Notes</strong></p>
-        <h1>项目笔记和后续博客。</h1>
+        <h1 data-i18n-zh="项目笔记。" data-i18n-en="Project notes.">项目笔记。</h1>
         <p>
-          现在这里会优先记录作品集项目、截图说明和技术取舍；之后也会继续补充更常规的 blog 写作。
+          <span
+            data-i18n-zh="项目复盘、架构选择、实现细节和截图说明。"
+            data-i18n-en="Project reviews, architecture choices, implementation details, and screenshots."
+          >
+            项目复盘、架构选择、实现细节和截图说明。
+          </span>
         </p>
       </div>
 

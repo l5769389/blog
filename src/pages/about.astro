@@ -2,21 +2,28 @@
 import { BriefcaseBusiness, CodeXml, Compass, Mail } from '@lucide/astro';
 import Layout from '../layouts/Layout.astro';
 import SocialLinks from '../components/SocialLinks.astro';
+import GitHubIcon from '../components/GitHubIcon.astro';
 
 const values = [
   {
-    title: 'Portfolio first',
-    body: 'I want this site to make projects easy to inspect: what problem they solve, what stack they use, and where the source lives.',
+    titleZh: '全栈开发',
+    titleEn: 'Full-stack development',
+    bodyZh: '熟悉前端工程、后端服务、实时通信、桌面打包和项目交付。',
+    bodyEn: 'Frontend engineering, backend services, real-time communication, desktop packaging, and product delivery.',
     Icon: CodeXml,
   },
   {
-    title: 'Readable build notes',
-    body: 'Blog posts will mostly be project notes: screenshots, architecture choices, implementation details, and lessons learned.',
+    titleZh: '医学与信号工具',
+    titleEn: 'Medical and signal tools',
+    bodyZh: '实践方向包括 DICOM 影像工作台、呼吸信号处理和数据可视化。',
+    bodyEn: 'Work across DICOM imaging workbenches, respiration signal processing, and data visualization.',
     Icon: Compass,
   },
   {
-    title: 'Open connection',
-    body: 'GitHub is the main portfolio entry, and email is the fastest way to reach me about projects or collaboration.',
+    titleZh: '工程表达',
+    titleEn: 'Engineering communication',
+    bodyZh: '重视清晰的功能边界、可验证的流程和可维护的实现。',
+    bodyEn: 'Clear product boundaries, verifiable workflows, and maintainable implementations.',
     Icon: CodeXml,
   },
 ];
@@ -27,9 +34,19 @@ const values = [
     <div class="container about-grid">
       <div class="page-header">
         <p class="eyebrow">About <strong>Kirin</strong></p>
-        <h1>Software engineer building practical tools and project notes.</h1>
+        <h1
+          data-i18n-zh="全栈工程师，关注实用工具和项目复盘。"
+          data-i18n-en="Full-stack engineer building practical tools and project notes."
+        >
+          全栈工程师，关注实用工具和项目复盘。
+        </h1>
         <p>
-          这个站点会更像我的作品集入口：先展示 GitHub 项目和可视化成果，再逐步补充 blog、复盘和工程笔记。
+          <span
+            data-i18n-zh="中国科学技术大学毕业，现居上海。主要方向包括医学影像、实时信号处理和 Web 工具。"
+            data-i18n-en="USTC graduate based in Shanghai, focused on medical imaging, real-time signal processing, and web tools."
+          >
+            中国科学技术大学毕业，现居上海。主要方向包括医学影像、实时信号处理和 Web 工具。
+          </span>
         </p>
         <SocialLinks />
       </div>
@@ -37,10 +54,13 @@ const values = [
       <aside class="about-card">
         <div class="portrait" aria-hidden="true"><span></span></div>
         <h2>Kirin</h2>
-        <p>Hangzhou, China</p>
-        <div class="role"><BriefcaseBusiness size={18} /> Software Engineer</div>
+        <p data-i18n-zh="上海，中国" data-i18n-en="Shanghai, China">上海，中国</p>
+        <div class="role">
+          <BriefcaseBusiness size={18} />
+          <span data-i18n-zh="全栈工程师 / 中国科学技术大学" data-i18n-en="Full-Stack Engineer / USTC">全栈工程师 / 中国科学技术大学</span>
+        </div>
         <div class="contact-actions">
-          <a href="https://github.com/l5769389"><CodeXml size={17} /> GitHub</a>
+          <a href="https://github.com/l5769389"><GitHubIcon size={17} /> GitHub</a>
           <a href="mailto:5769389@qq.com"><Mail size={17} /> Email</a>
         </div>
       </aside>
@@ -50,11 +70,11 @@ const values = [
   <section class="about-section">
     <div class="container values-grid">
       {
-        values.map(({ title, body, Icon }) => (
+        values.map(({ titleZh, titleEn, bodyZh, bodyEn, Icon }) => (
           <article class="value-card">
             <Icon size={24} stroke-width={2.2} />
-            <h2>{title}</h2>
-            <p>{body}</p>
+            <h2 data-i18n-zh={titleZh} data-i18n-en={titleEn}>{titleZh}</h2>
+            <p data-i18n-zh={bodyZh} data-i18n-en={bodyEn}>{bodyZh}</p>
           </article>
         ))
       }
@@ -64,18 +84,38 @@ const values = [
   <section class="page-shell timeline-shell">
     <div class="container timeline">
       <div class="section-heading">
-        <h2>Now</h2>
+        <h2 data-i18n-zh="项目方向" data-i18n-en="Focus Areas">项目方向</h2>
       </div>
       <div class="timeline-list">
         <article>
-          <span>2026</span>
-          <h3>Turning the site into a portfolio home</h3>
-          <p>整理项目截图、GitHub 链接和重点项目说明，让访问者可以更快理解我做过什么。</p>
+          <span>RespiraScope</span>
+          <h3
+            data-i18n-zh="实时呼吸信号处理"
+            data-i18n-en="Real-time respiration signal processing"
+          >
+            实时呼吸信号处理
+          </h3>
+          <p
+            data-i18n-zh="采集、滤波、峰谷识别、BPM 计算、记录复算和 Web Console 展示。"
+            data-i18n-en="Acquisition, filtering, peak detection, BPM calculation, recording review, and Web Console visualization."
+          >
+            采集、滤波、峰谷识别、BPM 计算、记录复算和 Web Console 展示。
+          </p>
         </article>
         <article>
-          <span>Focus</span>
-          <h3>DICOM tools, web apps, and project writing</h3>
-          <p>继续打磨 DicomVision，同时把后续项目沉淀成更完整的作品集条目和 blog 记录。</p>
+          <span>DicomVision</span>
+          <h3
+            data-i18n-zh="DICOM 医学影像工作台"
+            data-i18n-en="DICOM medical imaging workbench"
+          >
+            DICOM 医学影像工作台
+          </h3>
+          <p
+            data-i18n-zh="阅片、MPR 重建、测量分析、DICOM 标签检查、MTF/FWHM 和 QA 流程。"
+            data-i18n-en="Stack viewing, MPR reconstruction, measurement, DICOM tag review, MTF/FWHM, and QA workflows."
+          >
+            阅片、MPR 重建、测量分析、DICOM 标签检查、MTF/FWHM 和 QA 流程。
+          </p>
         </article>
       </div>
     </div>

@@ -10,7 +10,7 @@ const blog = defineCollection({
     readTime: z.string(),
     tags: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
-    cover: z.enum(['typescript', 'architecture', 'growth', 'astro', 'dicom', 'respira']).default('astro'),
+    cover: z.enum(['typescript', 'architecture', 'growth', 'astro', 'dicom', 'respira', 'note']).default('astro'),
   }),
 });
 

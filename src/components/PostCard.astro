@@ -1,7 +1,7 @@
----
+﻿---
 import { ArrowRight } from '@lucide/astro';
 import type { BlogPost } from '../lib/posts';
-import { formatDate } from '../lib/posts';
+import { formatDateEn, formatDateZh, formatReadTimeEn, formatReadTimeZh } from '../lib/posts';
 
 interface Props {
   post: BlogPost;
@@ -65,20 +65,35 @@ const primaryTag = tags[0] ?? 'Notes';
         </span>
       )
     }
+    {
+      cover === 'note' && (
+        <span class="note-mark" aria-hidden="true">
+          <i></i>
+          <i></i>
+          <i></i>
+          <b>ND</b>
+        </span>
+      )
+    }
   </a>
 
   <div class="post-body">
     <h3><a href={`/blog/${post.id}`}>{title}</a></h3>
     <p>{description}</p>
     <div class="post-meta">
-      <span>{formatDate(pubDate)}</span>
+      <span data-i18n-zh={formatDateZh(pubDate)} data-i18n-en={formatDateEn(pubDate)}>
+        {formatDateZh(pubDate)}
+      </span>
       <span>{primaryTag}</span>
-      <span>{readTime}</span>
+      <span data-i18n-zh={formatReadTimeZh(readTime)} data-i18n-en={formatReadTimeEn(readTime)}>
+        {formatReadTimeZh(readTime)}
+      </span>
     </div>
     {
       compact && (
         <a class="read-link" href={`/blog/${post.id}`}>
-          Read post <ArrowRight size={16} stroke-width={2.2} />
+          <span data-i18n-zh="阅读全文" data-i18n-en="Read post">阅读全文</span>
+          <ArrowRight size={16} stroke-width={2.2} />
         </a>
       )
     }
@@ -127,10 +142,15 @@ const primaryTag = tags[0] ?? 'Notes';
     background: var(--cover-respira-bg);
   }
 
+  .cover.note {
+    background: var(--cover-note-bg);
+  }
+
   .ts-mark,
   .astro-mark,
   .dicom-mark,
-  .respira-mark {
+  .respira-mark,
+  .note-mark {
     display: grid;
     width: 76px;
     height: 76px;
@@ -211,6 +231,45 @@ const primaryTag = tags[0] ?? 'Notes';
   .respira-mark b {
     position: relative;
     font-size: 1.5rem;
+    letter-spacing: 0;
+  }
+
+  .note-mark {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(137, 146, 255, 0.34);
+    background: #111827;
+    color: #eef3fb;
+  }
+
+  .note-mark i {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    height: 2px;
+    border-radius: 999px;
+    background: rgba(180, 187, 255, 0.5);
+  }
+
+  .note-mark i:nth-child(1) {
+    top: 21px;
+  }
+
+  .note-mark i:nth-child(2) {
+    top: 32px;
+    right: 28px;
+  }
+
+  .note-mark i:nth-child(3) {
+    top: 43px;
+  }
+
+  .note-mark b {
+    position: relative;
+    align-self: end;
+    margin-bottom: 14px;
+    color: #eef3fb;
+    font-size: 1.35rem;
     letter-spacing: 0;
   }
 
@@ -322,7 +381,7 @@ const primaryTag = tags[0] ?? 'Notes';
   .post-meta span + span::before {
     margin-right: 12px;
     color: var(--meta-divider);
-    content: "•";
+    content: "/";
   }
 
   .read-link {
@@ -361,3 +420,4 @@ const primaryTag = tags[0] ?? 'Notes';
     }
   }
 </style>
+

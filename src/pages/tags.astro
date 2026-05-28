@@ -2,7 +2,14 @@
 import { getCollection } from 'astro:content';
 import { ArrowRight } from '@lucide/astro';
 import Layout from '../layouts/Layout.astro';
-import { formatDate, slugifyTag, sortPosts } from '../lib/posts';
+import {
+  formatDateEn,
+  formatDateZh,
+  formatReadTimeEn,
+  formatReadTimeZh,
+  slugifyTag,
+  sortPosts,
+} from '../lib/posts';
 
 const posts = sortPosts(await getCollection('blog'));
 const tags = posts.reduce<Record<string, typeof posts>>((acc, post) => {
@@ -21,10 +28,14 @@ const tagEntries = Object.entries(tags).sort(([a], [b]) => a.localeCompare(b));
     <div class="container">
       <div class="page-header">
         <p class="eyebrow"><strong>Tags</strong></p>
-        <h1>Browse by topic.</h1>
+        <h1 data-i18n-zh="按主题浏览。" data-i18n-en="Browse by topic.">按主题浏览。</h1>
         <p>
-          A simple index for finding posts by language, tool, practice, and
-          theme.
+          <span
+            data-i18n-zh="按语言、工具、实践方向和主题快速找到文章。"
+            data-i18n-en="A simple index for finding posts by language, tool, practice, and theme."
+          >
+            按语言、工具、实践方向和主题快速找到文章。
+          </span>
         </p>
       </div>
 
@@ -44,14 +55,31 @@ const tagEntries = Object.entries(tags).sort(([a], [b]) => a.localeCompare(b));
             <section id={slugifyTag(tag)} class="tag-section">
               <div class="section-heading">
                 <h2>{tag}</h2>
-                <span>{tagPosts.length} posts</span>
+                <span>
+                  {tagPosts.length}
+                  <span data-i18n-zh=" 篇" data-i18n-en=" posts"> 篇</span>
+                </span>
               </div>
               <div class="tag-posts">
                 {tagPosts.map((post) => (
                   <a class="tag-post" href={`/blog/${post.id}`}>
                     <div>
                       <h3>{post.data.title}</h3>
-                      <p>{formatDate(post.data.pubDate)} · {post.data.readTime}</p>
+                      <p>
+                        <span
+                          data-i18n-zh={formatDateZh(post.data.pubDate)}
+                          data-i18n-en={formatDateEn(post.data.pubDate)}
+                        >
+                          {formatDateZh(post.data.pubDate)}
+                        </span>
+                        <span class="meta-divider">/</span>
+                        <span
+                          data-i18n-zh={formatReadTimeZh(post.data.readTime)}
+                          data-i18n-en={formatReadTimeEn(post.data.readTime)}
+                        >
+                          {formatReadTimeZh(post.data.readTime)}
+                        </span>
+                      </p>
                     </div>
                     <ArrowRight size={18} stroke-width={2.2} />
                   </a>
@@ -123,5 +151,10 @@ const tagEntries = Object.entries(tags).sort(([a], [b]) => a.localeCompare(b));
     margin: 0;
     color: var(--muted);
     font-size: 0.92rem;
+  }
+
+  .meta-divider {
+    margin: 0 10px;
+    color: var(--meta-divider);
   }
 </style>
