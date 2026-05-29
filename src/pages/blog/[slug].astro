@@ -1,41 +1,68 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { ArrowLeft } from '@lucide/astro';
+import { ArrowLeft, ArrowRight } from '@lucide/astro';
 import Layout from '../../layouts/Layout.astro';
 import {
   formatDateEn,
   formatDateZh,
   formatReadTimeEn,
   formatReadTimeZh,
+  getSeriesEntries,
   slugifyTag,
   sortPosts,
 } from '../../lib/posts';
 
 export async function getStaticPaths() {
   const posts = sortPosts(await getCollection('blog'));
+  const seriesEntries = getSeriesEntries(posts);
+  const seriesByPostId = new Map(
+    seriesEntries.flatMap((entry) => entry.posts.map((seriesPost) => [seriesPost.id, entry])),
+  );
 
   return posts.map((post) => ({
     params: { slug: post.id },
-    props: { post },
+    props: { post, seriesEntry: seriesByPostId.get(post.id) },
   }));
 }
 
-const { post } = Astro.props;
+const { post, seriesEntry } = Astro.props;
 const { Content, headings } = await render(post);
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+const backHref = seriesEntry?.href ?? '/blog/';
+const backLabelZh = seriesEntry ? '返回系列' : '返回博客';
+const backLabelEn = seriesEntry ? 'Back to series' : 'Back to blog';
+const seriesPosts = seriesEntry?.posts ?? [];
+const currentSeriesIndex = seriesPosts.findIndex((seriesPost) => seriesPost.id === post.id);
+const previousSeriesPost = currentSeriesIndex > 0 ? seriesPosts[currentSeriesIndex - 1] : undefined;
+const nextSeriesPost =
+  currentSeriesIndex >= 0 && currentSeriesIndex < seriesPosts.length - 1
+    ? seriesPosts[currentSeriesIndex + 1]
+    : undefined;
+let seriesPartIndex = 0;
+const seriesNavItems = seriesPosts.map((seriesPost) => {
+  const isOverview = seriesPost.data.series?.role === 'overview';
+  const partNumber = isOverview ? undefined : ++seriesPartIndex;
+
+  return {
+    post: seriesPost,
+    labelZh: isOverview ? '总览' : String(partNumber).padStart(2, '0'),
+    labelEn: isOverview ? 'Overview' : String(partNumber).padStart(2, '0'),
+    isCurrent: seriesPost.id === post.id,
+  };
+});
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
   <article class="page-shell article-shell">
     <div class="container article-container">
       <div class="article-lead">
-        <a class="back-link" href="/blog">
+        <a class="back-link" href={backHref}>
           <ArrowLeft size={17} stroke-width={2.2} />
-          <span data-i18n-zh="返回博客" data-i18n-en="Back to blog">返回博客</span>
+          <span data-i18n-zh={backLabelZh} data-i18n-en={backLabelEn}>{backLabelZh}</span>
         </a>
         <header class="article-header">
           <div class="tag-row">
-            {post.data.tags.map((tag) => <a class="tag" href={`/tags#${slugifyTag(tag)}`}>{tag}</a>)}
+            {post.data.tags.map((tag) => <a class="tag" href={`/tags/#${slugifyTag(tag)}`}>{tag}</a>)}
           </div>
           <h1>{post.data.title}</h1>
           <p>{post.data.description}</p>
@@ -62,24 +89,93 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
         </div>
 
         {
-          tocHeadings.length > 0 && (
+          (seriesEntry || tocHeadings.length > 0) && (
             <aside class="toc" aria-label="Table of contents">
-              <p data-i18n-zh="目录" data-i18n-en="Contents">目录</p>
-              <nav>
-                {tocHeadings.map((heading) => (
-                  <a class={`depth-${heading.depth}`} href={`#${heading.slug}`} data-toc-link={heading.slug}>
-                    {heading.text}
-                  </a>
-                ))}
-              </nav>
+              {
+                seriesEntry && (
+                  <section class="toc-section">
+                    <p data-i18n-zh="系列导航" data-i18n-en="Series">系列导航</p>
+                    <nav class="series-nav" aria-label="Series navigation">
+                      {seriesNavItems.map((item) => (
+                        <a
+                          class:list={['series-link', { 'series-current': item.isCurrent }]}
+                          href={`/blog/${item.post.id}/`}
+                          aria-current={item.isCurrent ? 'page' : undefined}
+                          title={item.post.data.title}
+                        >
+                          <span data-i18n-zh={item.labelZh} data-i18n-en={item.labelEn}>
+                            {item.labelZh}
+                          </span>
+                          <strong>{item.post.data.title}</strong>
+                        </a>
+                      ))}
+                    </nav>
+                  </section>
+                )
+              }
+              {
+                tocHeadings.length > 0 && (
+                  <section class="toc-section">
+                    <p data-i18n-zh="本文目录" data-i18n-en="Contents">本文目录</p>
+                    <nav>
+                      {tocHeadings.map((heading) => (
+                        <a
+                          class={`depth-${heading.depth}`}
+                          href={`#${heading.slug}`}
+                          data-toc-link={heading.slug}
+                          title={heading.text}
+                        >
+                          {heading.text}
+                        </a>
+                      ))}
+                    </nav>
+                  </section>
+                )
+              }
             </aside>
           )
         }
       </div>
+
+      {
+        seriesEntry && (previousSeriesPost || nextSeriesPost) && (
+          <nav class="series-pager" aria-label="Series pagination">
+            {previousSeriesPost ? (
+              <a
+                class="pager-card previous"
+                href={`/blog/${previousSeriesPost.id}/`}
+                title={previousSeriesPost.data.title}
+                aria-label={`上一篇：${previousSeriesPost.data.title}`}
+              >
+                <ArrowLeft size={18} stroke-width={2.2} />
+                <strong>{previousSeriesPost.data.title}</strong>
+              </a>
+            ) : (
+              <span class="pager-card placeholder" aria-hidden="true"></span>
+            )}
+            {nextSeriesPost ? (
+              <a
+                class="pager-card next"
+                href={`/blog/${nextSeriesPost.id}/`}
+                title={nextSeriesPost.data.title}
+                aria-label={`下一篇：${nextSeriesPost.data.title}`}
+              >
+                <strong>{nextSeriesPost.data.title}</strong>
+                <ArrowRight size={17} stroke-width={2.2} />
+              </a>
+            ) : (
+              <span class="pager-card placeholder" aria-hidden="true"></span>
+            )}
+          </nav>
+        )
+      }
     </div>
   </article>
   <script>
     const tocLinks = Array.from(document.querySelectorAll('[data-toc-link]'));
+    let suppressScrollSpyUntil = 0;
+    let scrollSpySettleTimer;
+    let getActiveHeadingId = () => null;
     const tocHeadings = tocLinks
       .map((link) => {
         const id = link.getAttribute('data-toc-link');
@@ -105,13 +201,19 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
       link.addEventListener('click', () => {
         const id = link.getAttribute('data-toc-link');
         if (id) {
+          suppressScrollSpyUntil = Date.now() + 520;
+          window.clearTimeout(scrollSpySettleTimer);
           setActiveTocLink(id);
+          scrollSpySettleTimer = window.setTimeout(() => {
+            suppressScrollSpyUntil = 0;
+            setActiveTocLink(getActiveHeadingId());
+          }, 560);
         }
       });
     });
 
     if (tocHeadings.length > 0) {
-      const getActiveHeadingId = () => {
+      getActiveHeadingId = () => {
         const marker = 120;
         const current = tocHeadings
           .map(({ heading }) => ({
@@ -126,6 +228,10 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
 
       let ticking = false;
       const updateActiveByScroll = () => {
+        if (Date.now() < suppressScrollSpyUntil) {
+          return;
+        }
+
         if (ticking) {
           return;
         }
@@ -145,8 +251,13 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
       window.addEventListener('hashchange', () => {
         const id = decodeURIComponent(window.location.hash.replace('#', ''));
         if (id) {
+          suppressScrollSpyUntil = Date.now() + 520;
+          window.clearTimeout(scrollSpySettleTimer);
           setActiveTocLink(id);
-          window.setTimeout(updateActiveByScroll, 260);
+          scrollSpySettleTimer = window.setTimeout(() => {
+            suppressScrollSpyUntil = 0;
+            updateActiveByScroll();
+          }, 560);
         }
       });
     }
@@ -760,6 +871,12 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
     font-weight: 850;
   }
 
+  .toc-section + .toc-section {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+
   .toc nav {
     display: grid;
     gap: 8px;
@@ -775,9 +892,7 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
     font-weight: 650;
     line-height: 1.45;
     text-overflow: ellipsis;
-    transition:
-      color 0.16s ease,
-      transform 0.16s ease;
+    transition: color 0.16s ease;
     white-space: nowrap;
   }
 
@@ -798,10 +913,53 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
   }
 
   .toc a.active {
-    transform: translateX(2px);
+    color: var(--accent-strong);
   }
 
   .toc a.active::before {
+    background: var(--accent);
+  }
+
+  .toc .series-link {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .toc .series-link span {
+    display: inline-grid;
+    flex: 0 0 auto;
+    min-width: 34px;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px 7px;
+    color: var(--accent-strong);
+    font-size: 0.7rem;
+    font-weight: 850;
+    line-height: 1;
+  }
+
+  .toc .series-link strong {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    color: inherit;
+    font-size: 0.8rem;
+    font-weight: inherit;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .toc .series-link.series-current,
+  .toc .series-link.series-current strong {
+    color: var(--accent-strong);
+  }
+
+  .toc .series-link.series-current::before {
     background: var(--accent);
   }
 
@@ -809,6 +967,68 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
     padding-left: 14px;
     font-size: 0.82rem;
     font-weight: 600;
+  }
+
+  .series-pager {
+    display: grid;
+    max-width: 980px;
+    margin: 42px auto 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .pager-card {
+    display: inline-flex;
+    width: fit-content;
+    min-width: 0;
+    max-width: min(100%, 430px);
+    min-height: 48px;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0 12px;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--surface-soft) 62%, transparent), transparent),
+      var(--surface);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .pager-card:not(.placeholder):hover {
+    border-color: color-mix(in srgb, var(--accent) 52%, var(--line-strong));
+    color: var(--accent-strong);
+  }
+
+  .pager-card strong {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text);
+    font-size: 0.92rem;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pager-card svg {
+    flex: 0 0 auto;
+    color: var(--accent-strong);
+  }
+
+  .pager-card.next {
+    justify-self: end;
+    justify-content: flex-end;
+  }
+
+  .pager-card.previous {
+    justify-self: start;
+  }
+
+  .pager-card.next strong {
+    text-align: right;
+  }
+
+  .pager-card.placeholder {
+    visibility: hidden;
   }
 
   @media (max-width: 1640px) {
@@ -846,6 +1066,22 @@ const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.d
 
     .content :global(.sequence-participants) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .series-pager {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pager-card.placeholder {
+      display: none;
+    }
+
+    .pager-card,
+    .pager-card.next,
+    .pager-card.previous {
+      width: 100%;
+      max-width: 100%;
+      justify-self: stretch;
     }
   }
 </style>

@@ -4,14 +4,21 @@ import GitHubIcon from './GitHubIcon.astro';
 
 const navItems = [
   { href: '/', labelZh: '首页', labelEn: 'Home' },
-  { href: '/blog', labelZh: '博客', labelEn: 'Blog' },
-  { href: '/projects', labelZh: '项目', labelEn: 'Projects' },
-  { href: '/tags', labelZh: '标签', labelEn: 'Tags' },
+  { href: '/blog/', labelZh: '博客', labelEn: 'Blog' },
+  { href: '/projects/', labelZh: '项目', labelEn: 'Projects' },
+  { href: '/about/', labelZh: '生活', labelEn: 'Life' },
+  { href: '/tags/', labelZh: '标签', labelEn: 'Tags' },
 ];
 
-const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isActive = (href: string) =>
-  href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
+const normalizePath = (path: string) => path.replace(/\/$/, '') || '/';
+const pathname = normalizePath(Astro.url.pathname);
+const isActive = (href: string) => {
+  const normalizedHref = normalizePath(href);
+
+  return normalizedHref === '/'
+    ? pathname === '/'
+    : pathname === normalizedHref || pathname.startsWith(`${normalizedHref}/`);
+};
 ---
 
 <header class="site-header">

@@ -1,8 +1,9 @@
 ---
-import { BriefcaseBusiness, CodeXml, Compass, Mail } from '@lucide/astro';
+import { BriefcaseBusiness, Camera, CodeXml, Compass, Mail, Video } from '@lucide/astro';
 import Layout from '../layouts/Layout.astro';
 import SocialLinks from '../components/SocialLinks.astro';
 import GitHubIcon from '../components/GitHubIcon.astro';
+import { getLifeMoments } from '../lib/lifeMoments';
 
 const values = [
   {
@@ -27,32 +28,52 @@ const values = [
     Icon: CodeXml,
   },
 ];
+
+const lifeMoments = getLifeMoments();
 ---
 
-<Layout title="About" description="About Kirin, the person behind Kirin Works.">
+<Layout title="Life" description="Life moments and the person behind Kirin Works.">
   <section class="page-shell">
     <div class="container about-grid">
       <div class="page-header">
-        <p class="eyebrow">About <strong>Kirin</strong></p>
+        <p class="eyebrow">Life <strong>& Work</strong></p>
         <h1
-          data-i18n-zh="全栈工程师，关注实用工具和项目复盘。"
-          data-i18n-en="Full-stack engineer building practical tools and project notes."
+          data-i18n-zh="写代码，也认真收藏生活里的光。"
+          data-i18n-en="Building software while keeping the light from everyday life close."
         >
-          全栈工程师，关注实用工具和项目复盘。
+          写代码，也认真收藏生活里的光。
         </h1>
         <p>
           <span
-            data-i18n-zh="中国科学技术大学毕业，现居上海。主要方向包括医学影像、实时信号处理和 Web 工具。"
-            data-i18n-en="USTC graduate based in Shanghai, focused on medical imaging, real-time signal processing, and web tools."
+            data-i18n-zh="这里放个人侧影、家庭影像和一些不属于项目文档的日常片段。技术作品仍然放在项目和博客里，生活本身也值得有一个安静的位置。"
+            data-i18n-en="A quieter place for personal notes, family media, and moments outside project documents."
           >
-            中国科学技术大学毕业，现居上海。主要方向包括医学影像、实时信号处理和 Web 工具。
+            这里放个人侧影、家庭影像和一些不属于项目文档的日常片段。技术作品仍然放在项目和博客里，生活本身也值得有一个安静的位置。
           </span>
         </p>
         <SocialLinks />
       </div>
 
       <aside class="about-card">
-        <div class="portrait" aria-hidden="true"><span></span></div>
+        <figure class="family-photo">
+          <img
+            src="/media/life/2026-05-29-little-light.webp"
+            srcset="/media/life/2026-05-29-little-light-560.webp 560w, /media/life/2026-05-29-little-light.webp 960w"
+            sizes="(max-width: 960px) calc(100vw - 48px), 360px"
+            width="960"
+            height="721"
+            alt="生活里的温暖瞬间"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+          <figcaption
+            data-i18n-zh="生活里的小小光源，也提醒我把工具做得更可靠、更有人味。"
+            data-i18n-en="A quiet light in everyday life, reminding me to build tools with care and steadiness."
+          >
+            生活里的小小光源，也提醒我把工具做得更可靠、更有人味。
+          </figcaption>
+        </figure>
         <h2>Kirin</h2>
         <p data-i18n-zh="上海，中国" data-i18n-en="Shanghai, China">上海，中国</p>
         <div class="role">
@@ -64,6 +85,72 @@ const values = [
           <a href="mailto:5769389@qq.com"><Mail size={17} /> Email</a>
         </div>
       </aside>
+    </div>
+  </section>
+
+  <section class="life-section">
+    <div class="container">
+      <div class="section-heading">
+        <h2 data-i18n-zh="生活时间线" data-i18n-en="Life Timeline">生活时间线</h2>
+      </div>
+      <div class="life-timeline">
+        {
+          lifeMoments.map((moment) => {
+            const MediaIcon = moment.media.type === 'video' ? Video : Camera;
+            const mediaLabelZh = moment.media.type === 'video' ? '视频' : '照片';
+            const mediaLabelEn = moment.media.type === 'video' ? 'Video' : 'Photo';
+
+            return (
+              <article class="life-moment">
+                <div class="moment-media">
+                  {
+                    moment.media.type === 'video' ? (
+                      <video
+                        controls
+                        preload="metadata"
+                        poster={moment.media.poster}
+                        aria-label={moment.media.altZh}
+                      >
+                        <source src={moment.media.src} />
+                      </video>
+                    ) : (
+                      <img
+                        src={moment.media.src}
+                        srcset={moment.media.srcSet}
+                        sizes={moment.media.sizes}
+                        width={moment.media.width}
+                        height={moment.media.height}
+                        alt={moment.media.altZh}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )
+                  }
+                </div>
+                <div class="moment-body">
+                  <div class="moment-meta">
+                    <time
+                      datetime={moment.date}
+                      data-i18n-zh={moment.displayDateZh}
+                      data-i18n-en={moment.displayDateEn}
+                    >
+                      {moment.displayDateZh}
+                    </time>
+                    <span class="moment-kind">
+                      <MediaIcon size={16} stroke-width={2.2} />
+                      <span data-i18n-zh={mediaLabelZh} data-i18n-en={mediaLabelEn}>{mediaLabelZh}</span>
+                    </span>
+                  </div>
+                  <h3 data-i18n-zh={moment.titleZh} data-i18n-en={moment.titleEn}>{moment.titleZh}</h3>
+                  <p data-i18n-zh={moment.descriptionZh} data-i18n-en={moment.descriptionEn}>
+                    {moment.descriptionZh}
+                  </p>
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
     </div>
   </section>
 
@@ -143,51 +230,27 @@ const values = [
     padding: 28px;
   }
 
-  .portrait {
-    position: relative;
-    overflow: hidden;
+  .family-photo {
+    margin: 0;
+  }
+
+  .family-photo img {
+    display: block;
     width: 100%;
-    aspect-ratio: 1.05;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: center;
+    border: 1px solid var(--line-strong);
     border-radius: var(--radius);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0 50%, transparent 50%),
-      linear-gradient(135deg, #dfe8f5, #f3d6ca);
+    background: #080d13;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
   }
 
-  .portrait::before,
-  .portrait::after,
-  .portrait span {
-    position: absolute;
-    content: "";
-  }
-
-  .portrait::before {
-    right: 36%;
-    bottom: 38%;
-    width: 70px;
-    height: 76px;
-    border-radius: 50%;
-    background: #202633;
-  }
-
-  .portrait::after {
-    right: 25%;
-    bottom: 6%;
-    width: 170px;
-    height: 122px;
-    border-radius: 80px 80px 20px 20px;
-    background: #1b2230;
-    transform: rotate(10deg);
-  }
-
-  .portrait span {
-    right: 28%;
-    bottom: 34%;
-    z-index: 1;
-    width: 48px;
-    height: 36px;
-    border-radius: 50%;
-    background: #d3a58f;
+  .family-photo figcaption {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.65;
   }
 
   .about-card h2 {
@@ -225,6 +288,79 @@ const values = [
     padding: 0 13px;
     color: var(--link-muted);
     font-weight: 750;
+  }
+
+  .life-section {
+    padding: 6px 0 38px;
+  }
+
+  .life-timeline {
+    display: grid;
+    gap: 18px;
+  }
+
+  .life-moment {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow-soft);
+    grid-template-columns: minmax(260px, 420px) minmax(0, 1fr);
+  }
+
+  .moment-media {
+    border-right: 1px solid var(--line);
+    background: var(--surface-soft);
+  }
+
+  .moment-media img,
+  .moment-media video {
+    width: 100%;
+    height: 100%;
+    min-height: 260px;
+    object-fit: cover;
+  }
+
+  .moment-media video {
+    background: #05070a;
+  }
+
+  .moment-body {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: center;
+    padding: 28px;
+  }
+
+  .moment-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+
+  .moment-kind {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent-strong);
+  }
+
+  .life-moment h3 {
+    margin: 14px 0 10px;
+    font-size: clamp(1.35rem, 1.18rem + 0.5vw, 1.8rem);
+    line-height: 1.2;
+  }
+
+  .life-moment p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.75;
   }
 
   .about-section {
@@ -280,8 +416,14 @@ const values = [
 
   @media (max-width: 960px) {
     .about-grid,
-    .values-grid {
+    .values-grid,
+    .life-moment {
       grid-template-columns: 1fr;
+    }
+
+    .moment-media {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
     }
   }
 </style>

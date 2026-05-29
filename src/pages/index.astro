@@ -5,46 +5,10 @@ import GitHubIcon from '../components/GitHubIcon.astro';
 import PostCard from '../components/PostCard.astro';
 import ProfileCard from '../components/ProfileCard.astro';
 import Layout from '../layouts/Layout.astro';
-import { sortPosts } from '../lib/posts';
+import { getFeaturedBlogEntries } from '../lib/posts';
+import { portfolioProjects } from '../lib/projects';
 
-const posts = sortPosts(await getCollection('blog'));
-const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 3);
-
-const portfolioProjects = [
-  {
-    name: 'RespiraScope',
-    area: 'Respiration / Signal Processing',
-    descriptionZh: '呼吸信号采集、实时滤波、峰谷识别、BPM 计算和 Web Console 监测工具。',
-    descriptionEn:
-      'A real-time respiration signal console for acquisition, filtering, peak detection, BPM, and monitoring.',
-    noteHref: '/blog/respira-scope-realtime-breath-workbench',
-    githubHref: 'https://github.com/l5769389/RespiraScope',
-    image: '/images/respira-scope/breath-monitor.png',
-    tags: ['FastAPI', 'Socket.IO', 'Signal Processing', 'Web Console'],
-  },
-  {
-    name: 'DicomVision',
-    area: 'DICOM / Medical Imaging',
-    descriptionZh: 'DICOM 阅片、MPR 重建、测量分析、标签检查和 QA 流程的影像工作台。',
-    descriptionEn:
-      'A medical imaging workbench for DICOM viewing, MPR reconstruction, measurement, tags, and QA workflows.',
-    noteHref: '/blog/dicom-vision-imaging-workbench',
-    githubHref: 'https://github.com/l5769389/DicomVisionClient',
-    image: '/images/dicom-vision/theme-dark.png',
-    tags: ['Vue 3', 'FastAPI', 'Electron', 'Socket.IO'],
-  },
-  {
-    name: 'noteDock',
-    area: 'Local Notes / Markdown',
-    descriptionZh: '本地优先的 Markdown 编辑、文档预览、图形嵌入和知识关系工作台。',
-    descriptionEn:
-      'A local-first Markdown editor, document reader, diagram workspace, and knowledge tool.',
-    noteHref: '/blog/notedock-local-markdown-workbench',
-    githubHref: 'https://github.com/l5769389/note',
-    image: '/images/note-dock/todo-card-mockup.png',
-    tags: ['Electron', 'React', 'Markdown', 'Excalidraw'],
-  },
-];
+const featuredEntries = getFeaturedBlogEntries(await getCollection('blog'), 3);
 
 const currentProject = portfolioProjects[0];
 ---
@@ -67,7 +31,7 @@ const currentProject = portfolioProjects[0];
           </span>
         </p>
         <div class="button-row">
-          <a class="button primary" href="/projects">
+          <a class="button primary" href="/projects/">
             <span data-i18n-zh="查看项目" data-i18n-en="View projects">查看项目</span>
             <ArrowRight size={18} stroke-width={2.2} />
           </a>
@@ -83,30 +47,32 @@ const currentProject = portfolioProjects[0];
       </div>
 
       <aside class="hero-project" aria-label="Current featured project">
-        <a class="hero-image" href={currentProject.noteHref} aria-label={`Open ${currentProject.name}`}>
-          <img src={currentProject.image} alt={`${currentProject.name} project screenshot`} />
-        </a>
         <div class="hero-project-body">
-          <div class="project-label">
-            <span data-i18n-zh="当前展示" data-i18n-en="Featured">当前展示</span>
-            <strong>{currentProject.area}</strong>
-          </div>
           <h2>{currentProject.name}</h2>
           <p data-i18n-zh={currentProject.descriptionZh} data-i18n-en={currentProject.descriptionEn}>
             {currentProject.descriptionZh}
           </p>
+          <a class="hero-image" href={currentProject.href} aria-label={`Open ${currentProject.name}`}>
+            <img src={currentProject.image} alt={`${currentProject.name} project screenshot`} />
+          </a>
           <div class="tech-list compact-tags">
+            <span class="tag" data-i18n-zh="当前展示" data-i18n-en="Featured">当前展示</span>
+            <span class="tag area-tag">{currentProject.area}</span>
             {currentProject.tags.map((item) => <span class="tag">{item}</span>)}
           </div>
           <div class="card-links">
-            <a href={currentProject.noteHref}>
-              <span data-i18n-zh="阅读复盘" data-i18n-en="Read note">阅读复盘</span>
+            <a href={currentProject.href}>
+              <span data-i18n-zh="项目介绍" data-i18n-en="Project intro">项目介绍</span>
               <ArrowRight size={17} stroke-width={2.2} />
             </a>
-            <a href={currentProject.githubHref}>
-              <span data-i18n-zh="GitHub 源码" data-i18n-en="Source">GitHub 源码</span>
-              <GitHubIcon size={17} />
-            </a>
+            {
+              currentProject.reviewHref && (
+                <a href={currentProject.reviewHref}>
+                  <span data-i18n-zh="复盘记录" data-i18n-en="Review notes">复盘记录</span>
+                  <ArrowRight size={17} stroke-width={2.2} />
+                </a>
+              )
+            }
           </div>
         </div>
       </aside>
@@ -117,7 +83,7 @@ const currentProject = portfolioProjects[0];
     <div class="container">
       <div class="section-heading">
         <h2 data-i18n-zh="代表项目" data-i18n-en="Selected Work">代表项目</h2>
-        <a class="section-link" href="/projects">
+        <a class="section-link" href="/projects/">
           <span data-i18n-zh="查看全部" data-i18n-en="View all">查看全部</span>
           <ArrowRight size={17} stroke-width={2.2} />
         </a>
@@ -126,27 +92,31 @@ const currentProject = portfolioProjects[0];
         {
           portfolioProjects.map((project) => (
             <article class="work-card">
-              <a class="work-image" href={project.noteHref} aria-label={`Open ${project.name}`}>
-                <img src={project.image} alt={`${project.name} project screenshot`} />
-              </a>
               <div class="work-body">
-                <span>{project.area}</span>
                 <h3>{project.name}</h3>
                 <p data-i18n-zh={project.descriptionZh} data-i18n-en={project.descriptionEn}>
                   {project.descriptionZh}
                 </p>
+                <a class="work-image" href={project.href} aria-label={`Open ${project.name}`}>
+                  <img src={project.image} alt={`${project.name} project screenshot`} />
+                </a>
                 <div class="tech-list">
+                  <span class="tag area-tag">{project.area}</span>
                   {project.tags.map((item) => <span class="tag">{item}</span>)}
                 </div>
                 <div class="card-links">
-                  <a href={project.noteHref}>
-                    <span data-i18n-zh="阅读复盘" data-i18n-en="Read note">阅读复盘</span>
+                  <a href={project.href}>
+                    <span data-i18n-zh="项目介绍" data-i18n-en="Project intro">项目介绍</span>
                     <ArrowRight size={17} stroke-width={2.2} />
                   </a>
-                  <a href={project.githubHref}>
-                    <span data-i18n-zh="源码" data-i18n-en="Source">源码</span>
-                    <GitHubIcon size={17} />
-                  </a>
+                  {
+                    project.reviewHref && (
+                      <a href={project.reviewHref}>
+                        <span data-i18n-zh="复盘记录" data-i18n-en="Review notes">复盘记录</span>
+                        <ArrowRight size={17} stroke-width={2.2} />
+                      </a>
+                    )
+                  }
                 </div>
               </div>
             </article>
@@ -161,13 +131,13 @@ const currentProject = portfolioProjects[0];
       <div class="featured">
         <div class="section-heading">
           <h2 data-i18n-zh="项目复盘" data-i18n-en="Project Notes">项目复盘</h2>
-          <a class="section-link" href="/blog">
+          <a class="section-link" href="/blog/">
             <span data-i18n-zh="全部文章" data-i18n-en="All posts">全部文章</span>
             <ArrowRight size={17} stroke-width={2.2} />
           </a>
         </div>
         <div class="notes-list">
-          {featuredPosts.map((post) => <PostCard post={post} compact />)}
+          {featuredEntries.map((entry) => <PostCard entry={entry} compact />)}
         </div>
       </div>
       <ProfileCard />
@@ -218,10 +188,28 @@ const currentProject = portfolioProjects[0];
   .hero-project,
   .work-card {
     min-width: 0;
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong);
     border-radius: var(--radius);
-    background: var(--surface);
-    box-shadow: var(--shadow-soft);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--surface-soft) 46%, transparent), transparent 42%),
+      var(--surface);
+    box-shadow:
+      0 18px 42px rgba(0, 0, 0, 0.22),
+      inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .hero-project:hover,
+  .work-card:hover {
+    border-color: color-mix(in srgb, var(--accent) 52%, var(--line-strong));
+    box-shadow:
+      0 24px 54px rgba(0, 0, 0, 0.3),
+      0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
+      inset 0 1px 0 color-mix(in srgb, white 14%, transparent);
+    transform: translateY(-2px);
   }
 
   .hero-project {
@@ -246,12 +234,15 @@ const currentProject = portfolioProjects[0];
   }
 
   .hero-image {
-    border: 0;
-    border-bottom: 1px solid var(--line);
-    border-radius: 0;
+    margin-top: 22px;
+    border-color: var(--line-strong);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.2);
   }
 
   .hero-project-body {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
     padding: 26px;
   }
 
@@ -272,8 +263,7 @@ const currentProject = portfolioProjects[0];
     font-weight: 750;
   }
 
-  .project-label strong,
-  .work-body > span {
+  .project-label strong {
     display: inline-flex;
     margin-bottom: 8px;
     color: var(--accent-strong);
@@ -289,7 +279,7 @@ const currentProject = portfolioProjects[0];
   }
 
   .work-card h3 {
-    min-height: 36px;
+    min-height: 0;
   }
 
   .hero-project p,
@@ -317,7 +307,7 @@ const currentProject = portfolioProjects[0];
 
   .work-card .card-links {
     margin-top: auto;
-    padding-top: 22px;
+    padding-top: 18px;
   }
 
   .card-links a {
@@ -362,35 +352,44 @@ const currentProject = portfolioProjects[0];
   .work-card {
     display: grid;
     overflow: hidden;
-    grid-template-rows: auto 1fr;
   }
 
   .work-image {
-    border: 0;
-    border-bottom: 1px solid var(--line);
-    border-radius: 0;
+    margin-top: 22px;
+    border-color: var(--line-strong);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.2);
   }
 
   .work-body {
     display: flex;
-    min-height: 364px;
+    min-height: 520px;
     flex-direction: column;
-    padding: 24px;
+    padding: 26px;
   }
 
   .tech-list {
     display: flex;
-    height: 88px;
+    height: 92px;
     align-content: flex-start;
     flex-wrap: wrap;
     gap: 10px 8px;
-    margin-top: 20px;
+    margin-top: 22px;
     overflow: hidden;
   }
 
   .work-card .tag {
     min-height: 34px;
     line-height: 1.15;
+  }
+
+  .work-card .area-tag {
+    border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+    color: var(--accent-strong);
+  }
+
+  .hero-project .area-tag {
+    border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+    color: var(--accent-strong);
   }
 
   .compact-tags {

@@ -1,0 +1,217 @@
+---
+import { getCollection } from 'astro:content';
+import { ArrowLeft } from '@lucide/astro';
+import PostCard from '../../../components/PostCard.astro';
+import Layout from '../../../layouts/Layout.astro';
+import {
+  formatDateEn,
+  formatDateZh,
+  formatReadTimeEn,
+  formatReadTimeZh,
+  getSeriesEntries,
+} from '../../../lib/posts';
+
+export async function getStaticPaths() {
+  const seriesEntries = getSeriesEntries(await getCollection('blog'));
+
+  return seriesEntries.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const hasOverview = Boolean(entry.overviewPost);
+const articleCountLabelZh = hasOverview
+  ? `1 篇总览 / ${entry.childPosts.length} 篇子文章`
+  : `${entry.childPosts.length} 篇子文章`;
+const articleCountLabelEn = hasOverview
+  ? `1 overview / ${entry.childPosts.length} parts`
+  : `${entry.childPosts.length} parts`;
+---
+
+<Layout title={entry.title} description={entry.description}>
+  <section class="page-shell series-shell">
+    <div class="container">
+      <a class="back-link" href="/blog/">
+        <ArrowLeft size={17} stroke-width={2.2} />
+        <span data-i18n-zh="返回博客" data-i18n-en="Back to blog">返回博客</span>
+      </a>
+
+      <header class="series-header">
+        <p class="eyebrow"><strong>Series</strong></p>
+        <h1>{entry.title}</h1>
+        <p>{entry.description}</p>
+        <div class="series-meta">
+          <span data-i18n-zh={articleCountLabelZh} data-i18n-en={articleCountLabelEn}>
+            {articleCountLabelZh}
+          </span>
+          <span data-i18n-zh={formatDateZh(entry.pubDate)} data-i18n-en={formatDateEn(entry.pubDate)}>
+            {formatDateZh(entry.pubDate)}
+          </span>
+          <span data-i18n-zh={formatReadTimeZh(entry.readTime)} data-i18n-en={formatReadTimeEn(entry.readTime)}>
+            {formatReadTimeZh(entry.readTime)}
+          </span>
+        </div>
+      </header>
+
+      {
+        entry.overviewPost && (
+          <section class="series-block">
+            <div class="series-section-heading">
+              <h2 data-i18n-zh="总览文章" data-i18n-en="Overview">总览文章</h2>
+            </div>
+            <PostCard post={entry.overviewPost} compact />
+          </section>
+        )
+      }
+
+      <section class="series-block">
+        <div class="series-section-heading">
+          <h2 data-i18n-zh={hasOverview ? '子文章' : '系列文章'} data-i18n-en={hasOverview ? 'Parts' : 'Series posts'}>
+            {hasOverview ? '子文章' : '系列文章'}
+          </h2>
+          <span data-i18n-zh={`${entry.childPosts.length} 篇`} data-i18n-en={`${entry.childPosts.length} posts`}>
+            {entry.childPosts.length} 篇
+          </span>
+        </div>
+        <div class="series-list">
+        {
+          entry.childPosts.map((post, index) => (
+            <div class="series-item">
+              <span class="series-index">{String(index + 1).padStart(2, '0')}</span>
+              <PostCard post={post} compact />
+            </div>
+          ))
+        }
+        </div>
+      </section>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .series-shell {
+    background: var(--article-bg);
+  }
+
+  .container {
+    width: min(100% - 40px, 1120px);
+  }
+
+  .back-link {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 36px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0 14px;
+    background: var(--surface-soft);
+    color: var(--muted);
+    font-weight: 750;
+    box-shadow: var(--button-shadow);
+  }
+
+  .back-link:hover {
+    border-color: var(--line-strong);
+    color: var(--accent-strong);
+  }
+
+  .series-header {
+    max-width: 920px;
+    margin-bottom: 34px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .series-header h1 {
+    margin: 0 0 18px;
+    font-size: clamp(2.1rem, 1.55rem + 2vw, 3.65rem);
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+
+  .series-header p:not(.eyebrow) {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.08rem;
+    line-height: 1.75;
+  }
+
+  .series-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin-top: 22px;
+    color: var(--meta-text);
+    font-weight: 650;
+  }
+
+  .series-meta span + span::before {
+    margin-right: 14px;
+    color: var(--meta-divider);
+    content: "/";
+  }
+
+  .series-block {
+    margin-top: 28px;
+  }
+
+  .series-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 14px;
+  }
+
+  .series-section-heading h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  .series-section-heading span {
+    color: var(--muted);
+    font-weight: 750;
+  }
+
+  .series-list {
+    display: grid;
+    gap: 18px;
+  }
+
+  .series-item {
+    display: grid;
+    align-items: stretch;
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .series-index {
+    display: inline-grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--accent-strong);
+    font-size: 0.88rem;
+    font-weight: 900;
+    box-shadow: var(--button-shadow);
+  }
+
+  @media (max-width: 700px) {
+    .container {
+      width: min(100% - 28px, 1120px);
+    }
+
+    .series-item {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  }
+</style>

@@ -1,20 +1,53 @@
 ﻿---
 import { ArrowRight } from '@lucide/astro';
-import type { BlogPost } from '../lib/posts';
-import { formatDateEn, formatDateZh, formatReadTimeEn, formatReadTimeZh } from '../lib/posts';
+import type { BlogListEntry, BlogPost } from '../lib/posts';
+import {
+  formatDateEn,
+  formatDateZh,
+  formatReadTimeEn,
+  formatReadTimeZh,
+  postToBlogEntry,
+} from '../lib/posts';
 
 interface Props {
-  post: BlogPost;
+  post?: BlogPost;
+  entry?: BlogListEntry;
   compact?: boolean;
 }
 
-const { post, compact = false } = Astro.props;
-const { title, description, pubDate, readTime, tags, cover } = post.data;
+const { post, entry, compact = false } = Astro.props;
+const item = entry ?? (post ? postToBlogEntry(post) : undefined);
+
+if (!item) {
+  throw new Error('PostCard requires a post or entry prop.');
+}
+
+const { title, description, pubDate, readTime, tags, cover, href } = item;
+const isSeries = item.kind === 'series';
 const primaryTag = tags[0] ?? 'Notes';
+const typeLabelZh = isSeries
+  ? item.overviewPost
+    ? `总览 + ${item.childPosts.length} 篇子文`
+    : `${item.childPosts.length} 篇子文`
+  : primaryTag;
+const typeLabelEn = isSeries
+  ? item.overviewPost
+    ? `Overview + ${item.childPosts.length} parts`
+    : `${item.childPosts.length} parts`
+  : primaryTag;
+const actionLabelZh = isSeries ? '进入系列' : '阅读全文';
+const actionLabelEn = isSeries ? 'Open series' : 'Read post';
 ---
 
-<article class:list={['post-card', { compact }]}>
-  <a class={`cover ${cover}`} href={`/blog/${post.id}`} aria-label={title}>
+<article class:list={['post-card', { compact, series: isSeries }]}>
+  <a class={`cover ${cover}`} href={href} aria-label={title}>
+    {
+      isSeries && (
+        <span class="series-badge" data-i18n-zh="系列" data-i18n-en="Series">
+          系列
+        </span>
+      )
+    }
     {
       cover === 'typescript' && (
         <span class="ts-mark" aria-hidden="true">
@@ -78,21 +111,21 @@ const primaryTag = tags[0] ?? 'Notes';
   </a>
 
   <div class="post-body">
-    <h3><a href={`/blog/${post.id}`}>{title}</a></h3>
+    <h3><a href={href}>{title}</a></h3>
     <p>{description}</p>
     <div class="post-meta">
       <span data-i18n-zh={formatDateZh(pubDate)} data-i18n-en={formatDateEn(pubDate)}>
         {formatDateZh(pubDate)}
       </span>
-      <span>{primaryTag}</span>
+      <span data-i18n-zh={typeLabelZh} data-i18n-en={typeLabelEn}>{typeLabelZh}</span>
       <span data-i18n-zh={formatReadTimeZh(readTime)} data-i18n-en={formatReadTimeEn(readTime)}>
         {formatReadTimeZh(readTime)}
       </span>
     </div>
     {
       compact && (
-        <a class="read-link" href={`/blog/${post.id}`}>
-          <span data-i18n-zh="阅读全文" data-i18n-en="Read post">阅读全文</span>
+        <a class="read-link" href={href}>
+          <span data-i18n-zh={actionLabelZh} data-i18n-en={actionLabelEn}>{actionLabelZh}</span>
           <ArrowRight size={16} stroke-width={2.2} />
         </a>
       )
@@ -116,6 +149,22 @@ const primaryTag = tags[0] ?? 'Notes';
     place-items: center;
     overflow: hidden;
     border-bottom: 1px solid var(--cover-border);
+  }
+
+  .series-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 1;
+    border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--line));
+    border-radius: 999px;
+    padding: 5px 10px;
+    background: color-mix(in srgb, var(--surface) 84%, transparent);
+    color: var(--accent-strong);
+    font-size: 0.78rem;
+    font-weight: 850;
+    line-height: 1;
+    box-shadow: var(--button-shadow);
   }
 
   .cover.typescript {
@@ -359,6 +408,10 @@ const primaryTag = tags[0] ?? 'Notes';
     margin: 0 0 10px;
     font-size: 1.06rem;
     line-height: 1.35;
+  }
+
+  .post-card.series .post-body h3 {
+    font-size: 1.14rem;
   }
 
   .post-body p {

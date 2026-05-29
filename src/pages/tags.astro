@@ -62,7 +62,7 @@ const tagEntries = Object.entries(tags).sort(([a], [b]) => a.localeCompare(b));
               </div>
               <div class="tag-posts">
                 {tagPosts.map((post) => (
-                  <a class="tag-post" href={`/blog/${post.id}`}>
+                  <a class="tag-post" href={`/blog/${post.id}/`}>
                     <div>
                       <h3>{post.data.title}</h3>
                       <p>

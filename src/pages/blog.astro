@@ -2,9 +2,9 @@
 import { getCollection } from 'astro:content';
 import PostCard from '../components/PostCard.astro';
 import Layout from '../layouts/Layout.astro';
-import { sortPosts } from '../lib/posts';
+import { getBlogEntries } from '../lib/posts';
 
-const posts = sortPosts(await getCollection('blog'));
+const entries = getBlogEntries(await getCollection('blog'));
 ---
 
 <Layout
@@ -27,7 +27,7 @@ const posts = sortPosts(await getCollection('blog'));
       </div>
 
       <div class="post-list">
-        {posts.map((post) => <PostCard post={post} compact />)}
+        {entries.map((entry) => <PostCard entry={entry} compact />)}
       </div>
     </div>
   </section>

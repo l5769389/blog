@@ -11,6 +11,13 @@ const blog = defineCollection({
     tags: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
     cover: z.enum(['typescript', 'architecture', 'growth', 'astro', 'dicom', 'respira', 'note']).default('astro'),
+    series: z.object({
+      id: z.string(),
+      title: z.string(),
+      description: z.string().optional(),
+      role: z.enum(['overview', 'part']).default('part'),
+      order: z.number().int().positive().optional(),
+    }).optional(),
   }),
 });
 

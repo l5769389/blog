@@ -1,0 +1,115 @@
+name: Deploy Blog
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      BLOG_PORT: ${{ vars.BLOG_PORT }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static site
+        run: npm run build -- --outDir dist
+
+      - name: Package artifact
+        run: tar -czf kirin-blog-dist.tgz -C dist .
+
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "$DEPLOY_SSH_KEY" ]; then
+            echo "::error::Missing DEPLOY_SSH_KEY secret."
+            exit 1
+          fi
+
+          DEPLOY_HOST="${DEPLOY_HOST:-114.67.114.128}"
+          DEPLOY_USER="${DEPLOY_USER:-root}"
+          DEPLOY_PATH="${DEPLOY_PATH:-/opt/kirin-blog}"
+          BLOG_PORT="${BLOG_PORT:-8081}"
+
+          {
+            echo "DEPLOY_HOST=$DEPLOY_HOST"
+            echo "DEPLOY_USER=$DEPLOY_USER"
+            echo "DEPLOY_PATH=$DEPLOY_PATH"
+            echo "BLOG_PORT=$BLOG_PORT"
+          } >> "$GITHUB_ENV"
+
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload artifact
+        run: |
+          set -euo pipefail
+
+          REMOTE_ARCHIVE="/tmp/kirin-blog-${GITHUB_SHA}.tgz"
+          {
+            echo "REMOTE_ARCHIVE=$REMOTE_ARCHIVE"
+          } >> "$GITHUB_ENV"
+
+          scp -i ~/.ssh/deploy_key kirin-blog-dist.tgz "$DEPLOY_USER@$DEPLOY_HOST:$REMOTE_ARCHIVE"
+          scp -i ~/.ssh/deploy_key deploy/nginx-blog.conf "$DEPLOY_USER@$DEPLOY_HOST:/tmp/kirin-blog-nginx.conf"
+
+      - name: Publish on server
+        run: |
+          set -euo pipefail
+
+          ssh -i ~/.ssh/deploy_key "$DEPLOY_USER@$DEPLOY_HOST" \
+            "BLOG_DIR='$DEPLOY_PATH' BLOG_PORT='$BLOG_PORT' ARCHIVE='$REMOTE_ARCHIVE' GITHUB_SHA='$GITHUB_SHA' bash -s" <<'REMOTE'
+          set -euo pipefail
+
+          RELEASE="$BLOG_DIR/releases/$(date +%Y%m%d%H%M%S)-${GITHUB_SHA:0:7}"
+
+          mkdir -p "$RELEASE"
+          tar -xzf "$ARCHIVE" -C "$RELEASE"
+          find "$RELEASE" -type d -exec chmod 755 {} +
+          find "$RELEASE" -type f -exec chmod 644 {} +
+
+          mkdir -p "$BLOG_DIR"
+          mv /tmp/kirin-blog-nginx.conf "$BLOG_DIR/nginx.conf"
+          ln -sfn "$RELEASE" "$BLOG_DIR/current"
+          chown -R root:root "$BLOG_DIR"
+
+          docker rm -f kirin-blog >/dev/null 2>&1 || true
+          docker run -d \
+            --name kirin-blog \
+            --restart unless-stopped \
+            -p "$BLOG_PORT:80" \
+            -v "$BLOG_DIR/current:/usr/share/nginx/html:ro" \
+            -v "$BLOG_DIR/nginx.conf:/etc/nginx/conf.d/default.conf:ro" \
+            nginx:1.27-alpine
+
+          if command -v ufw >/dev/null 2>&1; then
+            ufw allow "$BLOG_PORT/tcp" >/dev/null || true
+          fi
+
+          curl -fsS "http://127.0.0.1:$BLOG_PORT/about/" >/dev/null
+          curl -fsS "http://127.0.0.1:$BLOG_PORT/blog/" >/dev/null
+
+          ls -1dt "$BLOG_DIR"/releases/* 2>/dev/null | tail -n +8 | xargs -r rm -rf
+          rm -f "$ARCHIVE"
+          REMOTE
